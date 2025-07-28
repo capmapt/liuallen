@@ -16,6 +16,7 @@ const dataChunk2 = {'申':['竖','横折','横','横','竖'],'叮':['竖','横�
         Object.assign(compressedStrokeData, typeof dataChunk1 !== 'undefined' ? dataChunk1 : {});
         Object.assign(compressedStrokeData, typeof dataChunk2 !== 'undefined' ? dataChunk2 : {});
         Object.assign(compressedStrokeData, typeof dataChunk3 !== 'undefined' ? dataChunk3 : {});
-        Object.assign(compressedStrokeData, typeof dataChunk4 !== 'undefined' ? dataChunk4 : {});
+Object.assign(compressedStrokeData, typeof dataChunk4 !== 'undefined' ? dataChunk4 : {});
+compressedStrokeData['垃'] = ['横','竖','横','点','横','竖','撇','捺'];
 
 
