@@ -19,4 +19,3 @@ const dataChunk2 = {'申':['竖','横折','横','横','竖'],'叮':['竖','横�
         Object.assign(compressedStrokeData, typeof dataChunk4 !== 'undefined' ? dataChunk4 : {});
 
 
-export { strokeMap, principleData, compressedStrokeData };

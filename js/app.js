@@ -110,7 +110,17 @@ if (SpeechRecognition) {
     micButton.addEventListener('click', () => { if (!isLearning) recognition.start(); });
     recognition.onstart = () => { micButton.classList.add('listening'); statusDiv.textContent = '请说...'; };
     recognition.onend = () => micButton.classList.remove('listening');
-    recognition.onerror = () => { statusDiv.textContent = '语音识别出错'; };
+    recognition.onerror = e => {
+        if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+            statusDiv.textContent = '无法使用麦克风，可手动输入';
+            micButton.style.display = 'none';
+            if (manualInput) {
+                manualInput.style.display = 'block';
+            }
+        } else {
+            statusDiv.textContent = '语音识别出错';
+        }
+    };
     recognition.onresult = e => {
         const transcript = e.results[0][0].transcript.trim().replace(/[。，]/g, '');
         const char = getCharFromTranscript(transcript);
