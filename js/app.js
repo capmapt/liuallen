@@ -24,22 +24,26 @@ async function learnChar(char) {
         const compressedStrokes = compressedStrokeData[char];
         let strokeNames = null;
         if (compressedStrokes) {
-            strokeNames = [];
-            let i = 0;
-            while (i < compressedStrokes.length) {
-                let found = false;
-                for (let len = 4; len >= 1; len--) {
-                    if (i + len <= compressedStrokes.length) {
-                        const part = compressedStrokes.substring(i, i + len);
-                        if (strokeMap[part]) {
-                            strokeNames.push(strokeMap[part]);
-                            i += len;
-                            found = true;
-                            break;
+            if (Array.isArray(compressedStrokes)) {
+                strokeNames = compressedStrokes;
+            } else if (typeof compressedStrokes === 'string') {
+                strokeNames = [];
+                let i = 0;
+                while (i < compressedStrokes.length) {
+                    let found = false;
+                    for (let len = 4; len >= 1; len--) {
+                        if (i + len <= compressedStrokes.length) {
+                            const part = compressedStrokes.substring(i, i + len);
+                            if (strokeMap[part]) {
+                                strokeNames.push(strokeMap[part]);
+                                i += len;
+                                found = true;
+                                break;
+                            }
                         }
                     }
+                    if (!found) i++;
                 }
-                if (!found) i++;
             }
         }
         const principle = principleData[char];
@@ -59,7 +63,7 @@ async function learnChar(char) {
             await speakAsync(principle.explanation);
         }
 
-        if (strokeNames) {
+        if (strokeNames && strokeNames.length > 0) {
             for (let i = 0; i < strokeNames.length; i++) {
                 const strokeName = strokeNames[i];
                 const message = `第 ${i + 1} 笔: ${strokeName}`;
@@ -69,8 +73,8 @@ async function learnChar(char) {
                 await new Promise(resolve => setTimeout(resolve, 200));
             }
         } else {
-            statusDiv.textContent = '先看动画，感受它的笔顺吧！';
-            await speakAsync('这个字的笔顺名称我还在学习中，先看动画吧！');
+            statusDiv.textContent = '暂未收录该字的笔顺信息，先看动画吧！';
+            await speakAsync('抱歉，暂时没有这个字的笔顺信息，先看动画吧！');
             await writer.animateCharacter();
         }
         await speakAsync('写完啦！');
