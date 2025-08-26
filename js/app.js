@@ -7,9 +7,42 @@ const charCountSpan = document.getElementById('char-count');
 const manualInput = document.getElementById('manual-input');
 let writer = null;
 let isLearning = false;
+const strokeCache = new Map();
 
 function animateStrokeAsync(writerInstance, strokeNum) {
     return new Promise(resolve => writerInstance.animateStroke(strokeNum, { onComplete: resolve }));
+}
+
+function getStrokeNames(char) {
+    if (strokeCache.has(char)) return strokeCache.get(char);
+    const compressedStrokes = compressedStrokeData[char];
+    let strokeNames = null;
+    if (compressedStrokes) {
+        if (Array.isArray(compressedStrokes)) {
+            strokeNames = compressedStrokes;
+        } else if (typeof compressedStrokes === 'string') {
+            strokeNames = [];
+            let i = 0;
+            while (i < compressedStrokes.length) {
+                let found = false;
+                for (let len = 4; len >= 1; len--) {
+                    if (i + len <= compressedStrokes.length) {
+                        const part = compressedStrokes.substring(i, i + len);
+                        const name = strokeMap[part];
+                        if (name) {
+                            strokeNames.push(name);
+                            i += len;
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) i++;
+            }
+        }
+    }
+    strokeCache.set(char, strokeNames);
+    return strokeNames;
 }
 
 async function learnChar(char) {
@@ -21,31 +54,7 @@ async function learnChar(char) {
     statusDiv.textContent = `正在加载“${char}”字...`;
 
     try {
-        const compressedStrokes = compressedStrokeData[char];
-        let strokeNames = null;
-        if (compressedStrokes) {
-            if (Array.isArray(compressedStrokes)) {
-                strokeNames = compressedStrokes;
-            } else if (typeof compressedStrokes === 'string') {
-                strokeNames = [];
-                let i = 0;
-                while (i < compressedStrokes.length) {
-                    let found = false;
-                    for (let len = 4; len >= 1; len--) {
-                        if (i + len <= compressedStrokes.length) {
-                            const part = compressedStrokes.substring(i, i + len);
-                            if (strokeMap[part]) {
-                                strokeNames.push(strokeMap[part]);
-                                i += len;
-                                found = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (!found) i++;
-                }
-            }
-        }
+        const strokeNames = getStrokeNames(char);
         const principle = principleData[char];
         await HanziWriter.loadCharacterData(char);
         writer = HanziWriter.create('writer-target', char, {
