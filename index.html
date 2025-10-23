@@ -2,27 +2,92 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>AI汉字老师 (最终离线版)</title>
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-    <style>
-        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background-color: #f0f4f8; }
-        #writer-target { width: 300px; height: 300px; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); background-color: #fff; margin-bottom: 15px; }
-        #status { font-size: 1.2em; color: #34495e; height: 30px; margin-bottom: 10px; text-align: center; }
-        #mic-button { width: 80px; height: 80px; border-radius: 50%; border: none; background-color: #3498db; color: white; font-size: 2.5em; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; }
-        #mic-button.listening { background-color: #e74c3c; transform: scale(1.1); }
-        #mic-button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
-        #manual-input { display:none; margin-top:10px; font-size:1.2em; width:100px; text-align:center; }
-        .info { color: #7f8c8d; font-size: 0.9em; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>刘Allen的应用商店</title>
+    <link rel="stylesheet" href="assets/css/store.css">
 </head>
 <body>
-    <h1>AI汉字老师</h1>
-    <div id="writer-target"></div>
-    <div id="status">点击麦克风，说出想学的字</div>
-    <button id="mic-button">🎤</button>
-    <input id="manual-input" placeholder="输入汉字" maxlength="4">
-    <p class="info">当前字典支持 <span id="char-count">0</span> 个常用汉字</p>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📱 刘Allen的应用</h1>
+            <nav class="nav">
+                <a href="#apps" class="nav-link active">应用</a>
+                <a href="#about" class="nav-link">关于</a>
+            </nav>
+        </div>
+    </header>
 
-    <script type="module" src="js/app.js"></script>
+    <!-- 主内容区 -->
+    <main class="main">
+        <div class="container">
+            <!-- 欢迎区域 -->
+            <section class="hero">
+                <h2 class="hero-title">欢迎来到我的应用商店</h2>
+                <p class="hero-subtitle">探索有趣实用的Web应用</p>
+            </section>
+
+            <!-- 应用列表 -->
+            <section id="apps" class="apps-section">
+                <h3 class="section-title">精选应用</h3>
+
+                <div class="apps-grid" id="appsGrid">
+                    <!-- 应用卡片将由JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <!-- 关于区域 -->
+            <section id="about" class="about-section">
+                <h3 class="section-title">关于</h3>
+                <div class="about-content">
+                    <p>这是一个个人应用商店，收集了我开发的各种有趣的Web应用。</p>
+                    <p>所有应用都是开源的，基于现代Web技术构建。</p>
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number" id="appCount">0</div>
+                            <div class="stat-label">应用数量</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">100%</div>
+                            <div class="stat-label">开源</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">0</div>
+                            <div class="stat-label">广告</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 刘Allen. All rights reserved.</p>
+            <p>
+                <a href="https://github.com/capmapt/liuallen" target="_blank" class="footer-link">GitHub</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- 应用模态框 -->
+    <div id="appModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <div class="modal-body">
+                <div class="modal-icon" id="modalIcon"></div>
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <p class="modal-description" id="modalDescription"></p>
+                <div class="modal-tags" id="modalTags"></div>
+                <div class="modal-actions">
+                    <button class="btn btn-primary" id="launchBtn">启动应用</button>
+                    <a class="btn btn-secondary" id="githubBtn" target="_blank">查看源码</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="assets/js/store.js"></script>
 </body>
 </html>
