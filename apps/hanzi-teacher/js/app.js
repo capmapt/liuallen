@@ -1,12 +1,28 @@
 import { strokeMap, principleData, compressedStrokeData } from './data.js';
 import { speakAsync } from './speak.js';
 
+// 配置常量
+const CONFIG = {
+    WRITER_SIZE: 300,
+    WRITER_PADDING: 25,
+    ANIMATION_SPEED: 1.5,
+    STROKE_DELAY: 200,
+    SPEECH_RATE: 1.2,
+    SPEECH_TIMEOUT_BASE: 5000,
+    SPEECH_TIMEOUT_PER_CHAR: 500,
+    MAX_PATTERN_LENGTH: 4,
+    MIN_PATTERN_LENGTH: 1
+};
+
 const statusDiv = document.getElementById('status');
 const micButton = document.getElementById('mic-button');
 const charCountSpan = document.getElementById('char-count');
 const manualInput = document.getElementById('manual-input');
 let writer = null;
 let isLearning = false;
+
+// 笔画解析缓存
+const strokeCache = new Map();
 
 function animateStrokeAsync(writerInstance, strokeNum) {
     return new Promise(resolve => writerInstance.animateStroke(strokeNum, { onComplete: resolve }));
@@ -21,40 +37,49 @@ async function learnChar(char) {
     statusDiv.textContent = `正在加载“${char}”字...`;
 
     try {
-        const compressedStrokes = compressedStrokeData[char];
-        let strokeNames = null;
-        if (compressedStrokes) {
-            if (Array.isArray(compressedStrokes)) {
-                strokeNames = compressedStrokes;
-            } else if (typeof compressedStrokes === 'string') {
-                strokeNames = [];
-                let i = 0;
-                while (i < compressedStrokes.length) {
-                    let found = false;
-                    for (let len = 4; len >= 1; len--) {
-                        if (i + len <= compressedStrokes.length) {
-                            const part = compressedStrokes.substring(i, i + len);
-                            if (strokeMap[part]) {
-                                strokeNames.push(strokeMap[part]);
-                                i += len;
-                                found = true;
-                                break;
+        // 使用缓存的笔画解析结果
+        let strokeNames = strokeCache.get(char);
+
+        if (!strokeNames) {
+            const compressedStrokes = compressedStrokeData[char];
+            strokeNames = null;
+            if (compressedStrokes) {
+                if (Array.isArray(compressedStrokes)) {
+                    strokeNames = compressedStrokes;
+                } else if (typeof compressedStrokes === 'string') {
+                    strokeNames = [];
+                    let i = 0;
+                    while (i < compressedStrokes.length) {
+                        let found = false;
+                        for (let len = CONFIG.MAX_PATTERN_LENGTH; len >= CONFIG.MIN_PATTERN_LENGTH; len--) {
+                            if (i + len <= compressedStrokes.length) {
+                                const part = compressedStrokes.substring(i, i + len);
+                                if (strokeMap[part]) {
+                                    strokeNames.push(strokeMap[part]);
+                                    i += len;
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
+                        if (!found) i++;
                     }
-                    if (!found) i++;
                 }
+            }
+            // 缓存解析结果
+            if (strokeNames) {
+                strokeCache.set(char, strokeNames);
             }
         }
         const principle = principleData[char];
         await HanziWriter.loadCharacterData(char);
         writer = HanziWriter.create('writer-target', char, {
-            width: 300,
-            height: 300,
-            padding: 25,
+            width: CONFIG.WRITER_SIZE,
+            height: CONFIG.WRITER_SIZE,
+            padding: CONFIG.WRITER_PADDING,
             showCharacter: false,
             showOutline: true,
-            strokeAnimationSpeed: 1.5,
+            strokeAnimationSpeed: CONFIG.ANIMATION_SPEED,
         });
 
         await speakAsync(`好的，我们来学习“${char}”字。`);
@@ -70,7 +95,7 @@ async function learnChar(char) {
                 statusDiv.textContent = message;
                 await speakAsync(message);
                 await animateStrokeAsync(writer, i);
-                await new Promise(resolve => setTimeout(resolve, 200));
+                await new Promise(resolve => setTimeout(resolve, CONFIG.STROKE_DELAY));
             }
         } else {
             statusDiv.textContent = '暂未收录该字的笔顺信息，先看动画吧！';
