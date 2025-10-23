@@ -1,0 +1,25 @@
+{
+  "name": "liuallen-app-store",
+  "version": "2.0.0",
+  "description": "刘Allen的个人应用商店 - 现代化Web应用集合",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "test": "echo \"No tests configured\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/capmapt/liuallen.git"
+  },
+  "keywords": [
+    "app-store",
+    "web-apps",
+    "chinese-learning",
+    "education",
+    "hanzi"
+  ],
+  "author": "刘Allen",
+  "license": "MIT",
+  "homepage": "https://liuallen.com"
+}
