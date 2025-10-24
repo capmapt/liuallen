@@ -1,0 +1,22 @@
+{
+  "name": "worker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "build": "wrangler deploy --dry-run",
+    "typecheck": "tsc --noEmit",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "hono": "4.4.7",
+    "luxon": "3.4.4",
+    "uuid": "9.0.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "4.20240529.0",
+    "@types/luxon": "3.3.4",
+    "@types/uuid": "9.0.7",
+    "wrangler": "3.53.1"
+  }
+}
