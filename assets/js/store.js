@@ -1,32 +1,7 @@
-// 应用数据配置
-const apps = [
-    {
-        id: 'hanzi-teacher',
-        name: 'AI汉字老师',
-        icon: '🇨🇳',
-        description: '交互式汉字学习应用，通过语音识别、笔画动画和智能讲解帮助学习汉字书写',
-        longDescription: '基于Web Speech API的智能汉字学习应用。支持语音识别输入、实时笔画动画演示、智能语音讲解。内置258个常用汉字，采用Hanzi Writer进行笔画渲染，提供沉浸式的学习体验。',
-        tags: ['教育', '语音识别', '中文', 'AI'],
-        url: 'apps/hanzi-teacher/index.html',
-        github: 'https://github.com/capmapt/liuallen',
-        version: '1.0.0',
-        featured: true
-    },
-    // 未来可以在这里添加更多应用
-    // {
-    //     id: 'todo-app',
-    //     name: '待办事项',
-    //     icon: '✅',
-    //     description: '简洁优雅的待办事项管理应用',
-    //     longDescription: '...',
-    //     tags: ['效率', '工具'],
-    //     url: 'apps/todo/index.html',
-    //     github: 'https://github.com/capmapt/liuallen',
-    //     version: '1.0.0'
-    // }
-];
+// 应用数据源
+const DATA_URL = 'assets/data/apps.json';
 
-// DOM元素
+// DOM 元素
 const appsGrid = document.getElementById('appsGrid');
 const appModal = document.getElementById('appModal');
 const modalClose = document.querySelector('.modal-close');
@@ -37,129 +12,298 @@ const modalTags = document.getElementById('modalTags');
 const launchBtn = document.getElementById('launchBtn');
 const githubBtn = document.getElementById('githubBtn');
 const appCount = document.getElementById('appCount');
+const searchInput = document.getElementById('searchInput');
+const tagFilters = document.getElementById('tagFilters');
+const clearFilterBtn = document.getElementById('clearFilterBtn');
+const resultSummary = document.getElementById('resultSummary');
 
-// 当前选中的应用
+// 状态
+let apps = [];
+let filteredApps = [];
 let currentApp = null;
+const state = {
+    keyword: '',
+    tags: new Set()
+};
 
-// 初始化
-function init() {
-    renderApps();
+async function init() {
+    await loadApps();
+    renderTagFilters();
+    applyFilters();
     updateStats();
     setupEventListeners();
+    handleHashChange({ initial: true });
 }
 
-// 渲染应用列表
+async function loadApps() {
+    try {
+        const response = await fetch(DATA_URL, { cache: 'no-cache' });
+        if (!response.ok) {
+            throw new Error(`无法加载应用数据: ${response.status}`);
+        }
+        apps = await response.json();
+    } catch (error) {
+        console.error(error);
+        appsGrid.innerHTML = `
+            <div class="empty-state">
+                <h4>应用列表加载失败</h4>
+                <p>请刷新页面或稍后再试。</p>
+            </div>
+        `;
+        apps = [];
+    }
+}
+
+function renderTagFilters() {
+    if (!tagFilters) return;
+
+    const allTags = Array.from(new Set(apps.flatMap(app => app.tags || []))).sort((a, b) => a.localeCompare(b, 'zh-Hans-CN'));
+
+    if (allTags.length === 0) {
+        tagFilters.innerHTML = '<span class="filter-placeholder">暂无标签</span>';
+        return;
+    }
+
+    tagFilters.innerHTML = '';
+
+    allTags.forEach(tag => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'filter-chip';
+        button.textContent = tag;
+        button.dataset.tag = tag;
+        button.addEventListener('click', () => toggleTag(tag));
+        tagFilters.appendChild(button);
+    });
+
+    updateTagFilterState();
+}
+
+function toggleTag(tag) {
+    if (state.tags.has(tag)) {
+        state.tags.delete(tag);
+    } else {
+        state.tags.add(tag);
+    }
+    updateTagFilterState();
+    applyFilters();
+}
+
+function clearFilters() {
+    state.tags.clear();
+    state.keyword = '';
+    if (searchInput) {
+        searchInput.value = '';
+    }
+    updateTagFilterState();
+    applyFilters();
+}
+
+function updateTagFilterState() {
+    if (!tagFilters) return;
+
+    Array.from(tagFilters.children).forEach(button => {
+        const tag = button.dataset.tag;
+        if (state.tags.has(tag)) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    });
+
+    if (clearFilterBtn) {
+        clearFilterBtn.disabled = state.tags.size === 0 && state.keyword.trim() === '';
+    }
+}
+
+function applyFilters() {
+    const keyword = state.keyword.trim().toLowerCase();
+
+    filteredApps = apps.filter(app => {
+        const matchesKeyword = !keyword || [app.name, app.description, app.longDescription]
+            .filter(Boolean)
+            .some(text => text.toLowerCase().includes(keyword));
+
+        const matchesTags = state.tags.size === 0 || (app.tags || []).some(tag => state.tags.has(tag));
+
+        return matchesKeyword && matchesTags;
+    });
+
+    renderApps();
+    updateStats();
+    updateResultSummary();
+}
+
 function renderApps() {
     appsGrid.innerHTML = '';
 
-    apps.forEach((app, index) => {
+    if (filteredApps.length === 0) {
+        appsGrid.innerHTML = `
+            <div class="empty-state">
+                <h4>未找到匹配的应用</h4>
+                <p>尝试调整搜索关键词或标签筛选。</p>
+            </div>
+        `;
+        return;
+    }
+
+    filteredApps.forEach((app, index) => {
         const card = createAppCard(app, index);
         appsGrid.appendChild(card);
     });
 }
 
-// 创建应用卡片
 function createAppCard(app, index) {
-    const card = document.createElement('div');
+    const card = document.createElement('article');
     card.className = 'app-card';
-    card.style.animationDelay = `${index * 0.1}s`;
-
+    card.style.animationDelay = `${index * 0.08}s`;
+    card.setAttribute('data-app-id', app.id);
+    card.setAttribute('tabindex', '0');
     card.innerHTML = `
-        <span class="app-icon">${app.icon}</span>
+        <span class="app-icon" aria-hidden="true">${app.icon}</span>
         <h3 class="app-name">${app.name}</h3>
         <p class="app-description">${app.description}</p>
+        <div class="app-meta">
+            <span class="app-version">v${app.version || '1.0.0'}</span>
+            ${app.featured ? '<span class="app-badge">精选</span>' : ''}
+        </div>
         <div class="app-tags">
-            ${app.tags.map(tag => `<span class="app-tag">${tag}</span>`).join('')}
+            ${(app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('')}
         </div>
     `;
 
     card.addEventListener('click', () => showAppModal(app));
+    card.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            showAppModal(app);
+        }
+    });
 
     return card;
 }
 
-// 显示应用详情模态框
-function showAppModal(app) {
+function showAppModal(app, { skipHashUpdate = false } = {}) {
     currentApp = app;
 
     modalIcon.textContent = app.icon;
     modalTitle.textContent = app.name;
     modalDescription.textContent = app.longDescription || app.description;
-    modalTags.innerHTML = app.tags.map(tag => `<span class="app-tag">${tag}</span>`).join('');
-    githubBtn.href = app.github;
+    modalTags.innerHTML = (app.tags || []).map(tag => `<span class="app-tag">${tag}</span>`).join('');
+    launchBtn.disabled = !app.url;
+
+    if (app.url) {
+        launchBtn.setAttribute('data-url', app.url);
+    } else {
+        launchBtn.removeAttribute('data-url');
+    }
+
+    if (app.github) {
+        githubBtn.href = app.github;
+        githubBtn.removeAttribute('aria-disabled');
+    } else {
+        githubBtn.removeAttribute('href');
+        githubBtn.setAttribute('aria-disabled', 'true');
+    }
 
     appModal.classList.add('active');
     document.body.style.overflow = 'hidden';
-}
 
-// 关闭模态框
-function closeModal() {
-    appModal.classList.remove('active');
-    document.body.style.overflow = '';
-    currentApp = null;
-}
-
-// 启动应用
-function launchApp() {
-    if (currentApp) {
-        window.location.href = currentApp.url;
+    if (!skipHashUpdate) {
+        const newUrl = `${window.location.pathname}${window.location.search}#${app.id}`;
+        history.replaceState(null, '', newUrl);
     }
 }
 
-// 更新统计数据
-function updateStats() {
-    appCount.textContent = apps.length;
+function closeModal({ skipHashUpdate = false } = {}) {
+    appModal.classList.remove('active');
+    document.body.style.overflow = '';
+    currentApp = null;
+
+    if (!skipHashUpdate) {
+        history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
 }
 
-// 设置事件监听器
+function launchApp() {
+    if (!currentApp) return;
+
+    const url = currentApp.url || launchBtn.getAttribute('data-url');
+    if (url) {
+        window.open(url, '_blank', 'noopener');
+    }
+}
+
+function updateStats() {
+    if (appCount) {
+        appCount.textContent = apps.length;
+    }
+}
+
+function updateResultSummary() {
+    if (!resultSummary) return;
+
+    const total = apps.length;
+    const filtered = filteredApps.length;
+    if (state.keyword.trim() === '' && state.tags.size === 0) {
+        resultSummary.textContent = `当前共上架 ${total} 款应用`;
+    } else {
+        resultSummary.textContent = `筛选结果：${filtered} / ${total}`;
+    }
+}
+
 function setupEventListeners() {
-    // 关闭模态框
-    modalClose.addEventListener('click', closeModal);
+    if (modalClose) {
+        modalClose.addEventListener('click', () => closeModal());
+    }
 
-    appModal.addEventListener('click', (e) => {
-        if (e.target === appModal) {
+    appModal.addEventListener('click', (event) => {
+        if (event.target === appModal) {
             closeModal();
         }
     });
 
-    // ESC键关闭模态框
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && appModal.classList.contains('active')) {
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && appModal.classList.contains('active')) {
             closeModal();
         }
     });
 
-    // 启动应用按钮
-    launchBtn.addEventListener('click', launchApp);
+    if (launchBtn) {
+        launchBtn.addEventListener('click', launchApp);
+    }
 
-    // 导航链接平滑滚动
+    if (searchInput) {
+        searchInput.addEventListener('input', (event) => {
+            state.keyword = event.target.value;
+            updateTagFilterState();
+            applyFilters();
+        });
+    }
+
+    if (clearFilterBtn) {
+        clearFilterBtn.addEventListener('click', clearFilters);
+    }
+
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
+        anchor.addEventListener('click', function (event) {
             const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+            if (!target) return;
+            event.preventDefault();
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                // 更新导航激活状态
-                document.querySelectorAll('.nav-link').forEach(link => {
-                    link.classList.remove('active');
-                });
-                this.classList.add('active');
-            }
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
         });
     });
 
-    // 滚动时更新导航激活状态
     window.addEventListener('scroll', updateActiveNav);
+    window.addEventListener('hashchange', () => handleHashChange());
 }
 
-// 更新导航激活状态
 function updateActiveNav() {
     const sections = document.querySelectorAll('section[id]');
-    const scrollPosition = window.scrollY + 100;
+    const scrollPosition = window.scrollY + 120;
 
     sections.forEach(section => {
         const sectionTop = section.offsetTop;
@@ -168,21 +312,32 @@ function updateActiveNav() {
 
         if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
             document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href') === `#${sectionId}`) {
-                    link.classList.add('active');
-                }
+                link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
             });
         }
     });
 }
 
-// 页面加载完成后初始化
+function handleHashChange({ initial = false } = {}) {
+    const hash = decodeURIComponent(window.location.hash.replace('#', ''));
+
+    if (!hash) {
+        if (!initial && appModal.classList.contains('active')) {
+            closeModal({ skipHashUpdate: true });
+        }
+        return;
+    }
+
+    const targetApp = apps.find(app => app.id === hash);
+    if (targetApp) {
+        showAppModal(targetApp, { skipHashUpdate: true });
+    }
+}
+
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
 } else {
     init();
 }
 
-// 导出配置供其他模块使用
 export { apps };
