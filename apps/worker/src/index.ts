@@ -88,16 +88,26 @@ app.post('/auth/magic-link', async (c) => {
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return c.json({ error: 'Invalid email' }, 400);
   }
-  const timezone = body.timezone ?? 'UTC';
-  let user = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(email).first<{ id: string }>();
+  const requestedZone = body.timezone?.trim();
+  const normalizedZone =
+    requestedZone && DateTime.local().setZone(requestedZone).isValid ? requestedZone : null;
+  let user = await c.env.DB.prepare('SELECT id, timezone FROM users WHERE email = ?')
+    .bind(email)
+    .first<{ id: string; timezone: string | null }>();
   if (!user) {
+    const timezone = normalizedZone ?? 'UTC';
     const userId = uuid();
     await c.env.DB.prepare(
       'INSERT INTO users (id, email, timezone, created_at) VALUES (?, ?, ?, ?)',
     )
       .bind(userId, email, timezone, toIsoString(DateTime.utc()))
       .run();
-    user = { id: userId };
+    user = { id: userId, timezone };
+  } else if (normalizedZone && user.timezone !== normalizedZone) {
+    await c.env.DB.prepare('UPDATE users SET timezone = ? WHERE id = ?')
+      .bind(normalizedZone, user.id)
+      .run();
+    user = { ...user, timezone: normalizedZone };
   }
 
   const token = uuid();
