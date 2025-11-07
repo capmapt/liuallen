@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import type { Context } from 'hono';
 import type { EmailMessage } from '@cloudflare/workers-types';
 import { getCookie, setCookie } from 'hono/cookie';
-import { DateTime } from 'luxon';
+import { DateTime, IANAZone } from 'luxon';
 import { v4 as uuid } from 'uuid';
 
 type Frequency = 'daily' | 'weekly' | 'monthly';
@@ -89,8 +89,7 @@ app.post('/auth/magic-link', async (c) => {
     return c.json({ error: 'Invalid email' }, 400);
   }
   const requestedZone = body.timezone?.trim();
-  const normalizedZone =
-    requestedZone && DateTime.local().setZone(requestedZone).isValid ? requestedZone : null;
+  const normalizedZone = requestedZone && IANAZone.isValidZone(requestedZone) ? requestedZone : null;
   let user = await c.env.DB.prepare('SELECT id, timezone FROM users WHERE email = ?')
     .bind(email)
     .first<{ id: string; timezone: string | null }>();
