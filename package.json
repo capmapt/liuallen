@@ -1,20 +1,25 @@
 {
-  "name": "maildiary",
-  "private": true,
-  "workspaces": [
-    "apps/web",
-    "apps/worker"
-  ],
+  "name": "liuallen-app-store",
+  "version": "2.0.0",
+  "description": "刘Allen的个人应用商店 - 现代化Web应用集合",
+  "main": "index.html",
   "scripts": {
-    "format": "biome format --write .",
-    "lint": "biome lint .",
-    "typecheck": "pnpm --filter web typecheck && pnpm --filter worker typecheck",
-    "build": "pnpm --filter web build && pnpm --filter worker build",
-    "dev:web": "pnpm --filter web dev",
-    "dev:worker": "pnpm --filter worker dev"
+    "start": "python -m http.server 8000",
+    "dev": "python -m http.server 8000",
+    "test": "echo \"No tests configured\" && exit 0"
   },
-  "devDependencies": {
-    "@biomejs/biome": "1.5.3",
-    "typescript": "5.4.5"
-  }
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/capmapt/liuallen.git"
+  },
+  "keywords": [
+    "app-store",
+    "web-apps",
+    "chinese-learning",
+    "education",
+    "hanzi"
+  ],
+  "author": "刘Allen",
+  "license": "MIT",
+  "homepage": "https://liuallen.com"
 }
