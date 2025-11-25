@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Flow 专注计时器</title>
+    <style>
+        :root {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            color-scheme: light dark;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: radial-gradient(circle at top, #eef2ff 0%, #f8fafc 40%, #ffffff 100%);
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 16px;
+        }
+        .app {
+            width: min(640px, 100%);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.12);
+        }
+        h1 {
+            margin: 0 0 8px;
+            font-size: clamp(2rem, 3vw, 2.8rem);
+        }
+        p {
+            margin: 0 0 24px;
+            color: #475569;
+        }
+        .timer {
+            text-align: center;
+            margin: 32px 0;
+        }
+        .timer-display {
+            font-size: clamp(3rem, 8vw, 4.8rem);
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #2563eb;
+        }
+        .mode-label {
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 4px;
+            color: #64748b;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+        }
+        button {
+            border: none;
+            border-radius: 999px;
+            padding: 12px 24px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: #2563eb;
+            color: white;
+            min-width: 120px;
+        }
+        button.secondary {
+            background: #e2e8f0;
+            color: #0f172a;
+        }
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+        }
+        .settings {
+            margin: 40px 0 0;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        }
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #475569;
+            display: block;
+            margin-bottom: 6px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid #cbd5f5;
+            background: rgba(241, 245, 249, 0.8);
+            font-size: 1rem;
+            color: #0f172a;
+        }
+        .stats {
+            margin-top: 32px;
+            padding: 20px;
+            border-radius: 18px;
+            background: rgba(37, 99, 235, 0.08);
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            color: #1d4ed8;
+            font-weight: 600;
+        }
+        .pill {
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.06);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #334155;
+            display: inline-flex;
+            gap: 6px;
+            align-items: center;
+        }
+        @media (max-width: 600px) {
+            .app {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <h1>Focus Flow 专注计时器</h1>
+        <p>采用番茄工作法的节奏帮助你保持专注。设定目标，开始计时，完成后的番茄会自动记录。</p>
+        <div class="pill">提示：按空格键可以快速开始 / 暂停</div>
+        <div class="timer">
+            <div class="mode-label" id="modeLabel">专注中</div>
+            <div class="timer-display" id="timerDisplay">25:00</div>
+        </div>
+        <div class="controls">
+            <button id="toggleBtn">开始专注</button>
+            <button id="resetBtn" class="secondary">重置</button>
+            <button id="skipBtn" class="secondary">跳过休息</button>
+        </div>
+        <div class="settings">
+            <div>
+                <label for="focusInput">专注时长（分钟）</label>
+                <input id="focusInput" type="number" min="10" max="90" value="25">
+            </div>
+            <div>
+                <label for="breakInput">休息时长（分钟）</label>
+                <input id="breakInput" type="number" min="3" max="30" value="5">
+            </div>
+            <div>
+                <label for="goalInput">今日目标番茄数</label>
+                <input id="goalInput" type="number" min="1" max="24" value="8">
+            </div>
+        </div>
+        <div class="stats">
+            <span id="pomodoroCount">今日完成 0 个番茄</span>
+            <span id="goalProgress">目标进度 0 / 8</span>
+        </div>
+    </div>
+    <script>
+        const timerDisplay = document.getElementById('timerDisplay');
+        const modeLabel = document.getElementById('modeLabel');
+        const toggleBtn = document.getElementById('toggleBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const skipBtn = document.getElementById('skipBtn');
+        const focusInput = document.getElementById('focusInput');
+        const breakInput = document.getElementById('breakInput');
+        const goalInput = document.getElementById('goalInput');
+        const pomodoroCount = document.getElementById('pomodoroCount');
+        const goalProgress = document.getElementById('goalProgress');
+
+        let isRunning = false;
+        let isFocusMode = true;
+        let remainingSeconds = focusInput.value * 60;
+        let intervalId = null;
+        let completedPomodoros = Number(localStorage.getItem('focus-flow:pomodoros') || 0);
+        let storedGoal = Number(localStorage.getItem('focus-flow:goal') || goalInput.value);
+
+        goalInput.value = storedGoal;
+
+        function updateDisplay() {
+            const minutes = String(Math.floor(remainingSeconds / 60)).padStart(2, '0');
+            const seconds = String(remainingSeconds % 60).padStart(2, '0');
+            timerDisplay.textContent = `${minutes}:${seconds}`;
+            modeLabel.textContent = isFocusMode ? '专注中' : '休息中';
+            toggleBtn.textContent = isRunning ? '暂停' : (isFocusMode ? '开始专注' : '开始休息');
+            pomodoroCount.textContent = `今日完成 ${completedPomodoros} 个番茄`;
+            goalProgress.textContent = `目标进度 ${Math.min(completedPomodoros, storedGoal)} / ${storedGoal}`;
+        }
+
+        function switchMode() {
+            isFocusMode = !isFocusMode;
+            remainingSeconds = (isFocusMode ? focusInput.value : breakInput.value) * 60;
+            sendNotification(isFocusMode ? '开始下一轮专注' : '休息一下吧');
+            updateDisplay();
+        }
+
+        function tick() {
+            if (!isRunning) return;
+            remainingSeconds--;
+            if (remainingSeconds <= 0) {
+                if (isFocusMode) {
+                    completedPomodoros++;
+                    localStorage.setItem('focus-flow:pomodoros', completedPomodoros);
+                }
+                switchMode();
+            }
+            updateDisplay();
+        }
+
+        function toggleTimer() {
+            isRunning = !isRunning;
+            if (isRunning) {
+                intervalId = setInterval(tick, 1000);
+            } else {
+                clearInterval(intervalId);
+            }
+            updateDisplay();
+        }
+
+        function resetTimer() {
+            clearInterval(intervalId);
+            isRunning = false;
+            isFocusMode = true;
+            remainingSeconds = focusInput.value * 60;
+            updateDisplay();
+        }
+
+        function skipRest() {
+            if (!isFocusMode) {
+                switchMode();
+            }
+        }
+
+        function handleDurationChange() {
+            if (!isRunning) {
+                remainingSeconds = (isFocusMode ? focusInput.value : breakInput.value) * 60;
+                updateDisplay();
+            }
+        }
+
+        function handleGoalChange() {
+            storedGoal = Number(goalInput.value);
+            localStorage.setItem('focus-flow:goal', storedGoal);
+            updateDisplay();
+        }
+
+        function sendNotification(message) {
+            if (Notification.permission === 'granted') {
+                new Notification('Focus Flow', { body: message });
+            }
+        }
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                updateDisplay();
+            }
+        });
+
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                toggleTimer();
+            }
+        });
+
+        toggleBtn.addEventListener('click', toggleTimer);
+        resetBtn.addEventListener('click', resetTimer);
+        skipBtn.addEventListener('click', skipRest);
+        focusInput.addEventListener('change', handleDurationChange);
+        breakInput.addEventListener('change', handleDurationChange);
+        goalInput.addEventListener('change', handleGoalChange);
+
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
