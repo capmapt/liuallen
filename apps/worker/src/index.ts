@@ -53,10 +53,14 @@ interface Env extends Record<string, unknown> {
   COOKIE_DOMAIN: string;
   MAGIC_LINK_EXP_MINUTES?: string;
   MAILCHANNELS_API_KEY?: string;
+  MAILCHANNELS_API_URL?: string;
 }
 
 const SESSION_COOKIE = 'maildiary_session';
 const MAGIC_LINK_TTL_MINUTES = 30;
+const MAGIC_LINK_RATE_LIMIT_WINDOW_SECONDS = 15 * 60;
+const MAGIC_LINK_RATE_LIMIT_MAX_PER_EMAIL = 5;
+const MAGIC_LINK_RATE_LIMIT_MAX_PER_IP = 20;
 
 const toIsoString = (date: DateTime) => date.toUTC().toISO() ?? new Date().toISOString();
 
@@ -64,6 +68,38 @@ type AppVariables = { userId?: string; userEmail?: string };
 type HonoBindings = { Bindings: Env; Variables: AppVariables };
 
 const app = new Hono<HonoBindings>();
+
+const DEFAULT_ALLOWED_ORIGINS = ['https://maildiary-web.pages.dev'];
+
+app.use('*', async (c, next) => {
+  const origin = c.req.header('Origin');
+  const allowedOrigins = [c.env.APP_BASE_URL, ...DEFAULT_ALLOWED_ORIGINS].filter(Boolean) as string[];
+  const isAllowedOrigin = origin ? allowedOrigins.includes(origin) : false;
+
+  if (c.req.method === 'OPTIONS') {
+    if (isAllowedOrigin) {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': origin,
+          'Access-Control-Allow-Credentials': 'true',
+          'Access-Control-Allow-Methods': 'GET,POST,PATCH,PUT,DELETE,OPTIONS',
+          'Access-Control-Allow-Headers': c.req.header('Access-Control-Request-Headers') ?? 'Content-Type',
+          Vary: 'Origin',
+        },
+      });
+    }
+    return new Response(null, { status: 204 });
+  }
+
+  await next();
+
+  if (isAllowedOrigin) {
+    c.header('Access-Control-Allow-Origin', origin!);
+    c.header('Access-Control-Allow-Credentials', 'true');
+  }
+  c.header('Vary', 'Origin', { append: true });
+});
 
 app.use('*', async (c, next) => {
   const cookie = getCookie(c, SESSION_COOKIE);
@@ -87,6 +123,40 @@ app.post('/auth/magic-link', async (c) => {
   const email = body.email?.trim().toLowerCase();
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return c.json({ error: 'Invalid email' }, 400);
+  }
+  const ip =
+    c.req.header('cf-connecting-ip') ??
+    c.req.header('x-forwarded-for')?.split(',')[0]?.trim() ??
+    null;
+  if (ip) {
+    const ipLimit = await touchRateLimit(
+      c.env.KV_SESSIONS,
+      `magiclink:ip:${ip}`,
+      MAGIC_LINK_RATE_LIMIT_MAX_PER_IP,
+      MAGIC_LINK_RATE_LIMIT_WINDOW_SECONDS,
+    );
+    if (!ipLimit.allowed) {
+      const retryAfter = Math.max(ipLimit.retryAfter, 1);
+      return c.json(
+        { error: 'Too many requests from this network. Please try again later.' },
+        429,
+        { 'Retry-After': retryAfter.toString() },
+      );
+    }
+  }
+  const emailLimit = await touchRateLimit(
+    c.env.KV_SESSIONS,
+    `magiclink:email:${email}`,
+    MAGIC_LINK_RATE_LIMIT_MAX_PER_EMAIL,
+    MAGIC_LINK_RATE_LIMIT_WINDOW_SECONDS,
+  );
+  if (!emailLimit.allowed) {
+    const retryAfter = Math.max(emailLimit.retryAfter, 1);
+    return c.json(
+      { error: 'Too many magic link requests. Please wait a few minutes and try again.' },
+      429,
+      { 'Retry-After': retryAfter.toString() },
+    );
   }
   const timezone = body.timezone ?? 'UTC';
   let user = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(email).first<{ id: string }>();
@@ -393,41 +463,22 @@ app.delete('/reminders/:id', async (c) => {
     console.error(error);
     return c.json({ error: 'Internal error' }, 500);
   }
-});
-
-app.get('/export', async (c) => {
-  try {
-    const userId = requireAuth(c);
-    const { results: entries } = await c.env.DB.prepare(
-      'SELECT id, subject, text_content, html_content, created_at FROM entries WHERE user_id = ? ORDER BY created_at DESC',
-    )
-      .bind(userId)
-      .all<EntryRow>();
-    const payload = [] as Array<{ entry: EntryRow; assets: AssetRow[] }>;
-    for (const entry of entries) {
-      const assets = await c.env.DB.prepare(
-        'SELECT id, filename, content_type, size, r2_key, created_at FROM entry_assets WHERE entry_id = ? ORDER BY created_at ASC',
-      )
-        .bind(entry.id)
-        .all<AssetRow>();
-      payload.push({ entry, assets: assets.results });
-    }
-    return c.json({ entries: payload });
-  } catch (error) {
-    if (error instanceof Error && error.message === 'UNAUTHORIZED') {
-      return c.json({ error: 'Unauthorized' }, 401);
-    }
     console.error(error);
     return c.json({ error: 'Internal error' }, 500);
   }
 });
 
 async function sendMail(env: Env, mail: { to: string; subject: string; text: string; html: string; replyTo?: string }) {
-  return fetch('https://api.mailchannels.net/tx/v1/send', {
+  if (!env.MAILCHANNELS_API_KEY) {
+    console.warn('MAILCHANNELS_API_KEY is not configured; email delivery is disabled.');
+    return new Response('MAILCHANNELS_API_KEY missing', { status: 500 });
+  }
+  const endpoint = env.MAILCHANNELS_API_URL ?? 'https://api.mailchannels.net/tx/v1/send';
+  return fetch(endpoint, {
     method: 'POST',
     headers: {
       'content-type': 'application/json',
-      ...(env.MAILCHANNELS_API_KEY ? { Authorization: `Bearer ${env.MAILCHANNELS_API_KEY}` } : {}),
+      Authorization: `Bearer ${env.MAILCHANNELS_API_KEY}`,
     },
     body: JSON.stringify({
       personalizations: [
@@ -452,6 +503,29 @@ async function sendMail(env: Env, mail: { to: string; subject: string; text: str
       ],
     }),
   });
+}
+
+type RateLimitState = { count: number; resetAt: number };
+
+async function touchRateLimit(
+  kv: KVNamespace,
+  key: string,
+  maxRequests: number,
+  windowSeconds: number,
+): Promise<{ allowed: boolean; retryAfter: number }> {
+  const now = Math.floor(Date.now() / 1000);
+  const state = await kv.get<RateLimitState>(key, 'json');
+  if (state && state.resetAt > now) {
+    if (state.count >= maxRequests) {
+      return { allowed: false, retryAfter: state.resetAt - now };
+    }
+    const next = { count: state.count + 1, resetAt: state.resetAt };
+    await kv.put(key, JSON.stringify(next), { expiration: state.resetAt });
+    return { allowed: true, retryAfter: state.resetAt - now };
+  }
+  const resetAt = now + windowSeconds;
+  await kv.put(key, JSON.stringify({ count: 1, resetAt }), { expiration: resetAt });
+  return { allowed: true, retryAfter: windowSeconds };
 }
 
 function computeNextRun(
@@ -530,7 +604,7 @@ async function sendReminder(env: Env, reminder: ReminderRow & { email: string })
       : prompts
           .map((prompt) => {
             const dt = DateTime.fromISO(prompt.entry!.created_at).setZone(timezone);
-            return `${prompt.label}: ${dt.toLocaleString(DateTime.DATETIME_MED)} — ${prompt.entry!.subject ?? prompt.entry!.text_content?.slice(0, 80) ?? 'Entry'}`;
+            return `${prompt.label}: ${dt.toLocaleString(DateTime.DATETIME_MED)} - ${prompt.entry!.subject ?? prompt.entry!.text_content?.slice(0, 80) ?? 'Entry'}`;
           })
           .join('\n');
   const replyAddress = `reply+${reminder.user_id}@diary.liuallen.com`;
@@ -542,7 +616,7 @@ async function sendReminder(env: Env, reminder: ReminderRow & { email: string })
           .map((prompt) => {
             const dt = DateTime.fromISO(prompt.entry!.created_at).setZone(timezone);
             const title = prompt.entry!.subject ?? prompt.entry!.text_content?.slice(0, 120) ?? 'Entry';
-            return `<li><strong>${prompt.label}</strong> — ${dt.toLocaleString(DateTime.DATETIME_MED)} — ${title}</li>`;
+            return `<li><strong>${prompt.label}</strong> - ${dt.toLocaleString(DateTime.DATETIME_MED)} - ${title}</li>`;
           })
           .join('')
   }</ul>`;
