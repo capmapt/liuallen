@@ -280,18 +280,6 @@ function setupEventListeners() {
             applyFilters();
         }, 300));
     }
-}
-
-function debounce(func, wait) {
-    let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
-        clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
-    };
 
     if (clearFilterBtn) {
         clearFilterBtn.addEventListener('click', clearFilters);
@@ -311,6 +299,18 @@ function debounce(func, wait) {
 
     window.addEventListener('scroll', updateActiveNav);
     window.addEventListener('hashchange', () => handleHashChange());
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
 }
 
 function updateActiveNav() {
