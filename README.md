@@ -2,6 +2,8 @@
 
 MailDiary is an email-first journaling tool. Users sign in with a magic link, receive scheduled prompts, reply with text or attachments, and browse their archive on the web.
 
+It also powers https://liuallen.com — a personal homepage for Allen Liu (Min Liu) with a bilingual hero, project highlights, and a contact form.
+
 ## Architecture
 
 - **Frontend**: Next.js (static export) hosted on Cloudflare Pages at `https://diary.liuallen.com`.
@@ -44,6 +46,20 @@ pnpm dev
 ```
 
 The site loads at `http://localhost:3000` and proxies API calls to `http://localhost:8787` via `NEXT_PUBLIC_API_BASE`.
+
+### Updating the liuallen.com homepage
+
+- Homepage content lives in `apps/web/pages/index.tsx` with styles in `apps/web/styles/Home.module.css`.
+- Update the Cal.com link or email in the CTA buttons directly in `index.tsx`.
+- Writing links are currently placeholders in `index.tsx` and `apps/web/pages/writing.tsx`.
+- The previous app store experience is preserved at `/apps` (page file: `apps/web/pages/apps.tsx`).
+
+### Contact form handling
+
+- The contact form posts to the Worker endpoint `POST /contact` and stores submissions in D1 table `contact_messages`.
+- Apply migration `migrations/0002_contact_messages.sql` to create the table.
+- Ensure `APP_BASE_URL` in `wrangler.toml` (or `wrangler.dev.toml`) matches the site origin so CORS allows the form.
+- The web client uses `NEXT_PUBLIC_API_BASE` to reach the Worker; set it to your API origin when running locally or in production.
 
 ## Deployment
 
