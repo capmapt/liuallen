@@ -38,6 +38,15 @@ type AssetRow = {
   created_at: string;
 };
 
+type ContactMessageRow = {
+  id: string;
+  name: string;
+  email: string;
+  topic: string;
+  message: string;
+  created_at: string;
+};
+
 interface SessionData {
   userId: string;
   expiresAt: string;
@@ -117,6 +126,29 @@ app.use('*', async (c, next) => {
 });
 
 app.get('/health', (c) => c.json({ ok: true }));
+
+app.post('/contact', async (c) => {
+  const body = await c.req.json<{ name?: string; email?: string; topic?: string; message?: string }>();
+  const name = body.name?.trim();
+  const email = body.email?.trim();
+  const topic = body.topic?.trim();
+  const message = body.message?.trim();
+
+  if (!name || !email || !topic || !message) {
+    return c.json({ ok: false, error: 'Missing fields' }, 400);
+  }
+
+  const createdAt = toIsoString(DateTime.utc());
+  const id = uuid();
+
+  await c.env.DB.prepare(
+    'INSERT INTO contact_messages (id, name, email, topic, message, created_at) VALUES (?, ?, ?, ?, ?, ?)',
+  )
+    .bind(id, name, email, topic, message, createdAt)
+    .run();
+
+  return c.json({ ok: true });
+});
 
 app.post('/auth/magic-link', async (c) => {
   const body = await c.req.json<{ email?: string; timezone?: string }>();
@@ -460,9 +492,6 @@ app.delete('/reminders/:id', async (c) => {
     if (error instanceof Error && error.message === 'UNAUTHORIZED') {
       return c.json({ error: 'Unauthorized' }, 401);
     }
-    console.error(error);
-    return c.json({ error: 'Internal error' }, 500);
-  }
     console.error(error);
     return c.json({ error: 'Internal error' }, 500);
   }

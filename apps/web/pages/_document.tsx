@@ -9,10 +9,10 @@ class MyDocument extends Document {
   render() {
     const data = (this.props as any)?.__NEXT_DATA__;
     const page: string | undefined = data?.page;
-    const includeStoreStyles = page === '/' || page === '/index';
+    const includeStoreStyles = page === '/apps';
 
     return (
-      <Html lang="zh-CN">
+      <Html lang="en">
         <Head>{includeStoreStyles ? <link rel="stylesheet" href="/assets/css/store.css" /> : null}</Head>
         <body>
           <Main />

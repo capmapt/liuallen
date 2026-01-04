@@ -33,6 +33,8 @@ export interface Reminder {
   paused: number;
 }
 
+export type ContactTopic = 'Investing' | 'Partnership' | 'Media' | 'Events' | 'Build Studio' | 'Other';
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:8787';
 
 async function http<T>(path: string, init?: RequestInit): Promise<T> {
@@ -126,4 +128,16 @@ export function exportEntries() {
 
 export function assetUrl(entryId: string, assetId: string) {
   return `${API_BASE}/entries/${entryId}/assets/${assetId}`;
+}
+
+export function submitContactMessage(input: {
+  name: string;
+  email: string;
+  topic: ContactTopic;
+  message: string;
+}) {
+  return http<{ ok: boolean }>('/contact', {
+    method: 'POST',
+    body: JSON.stringify(input),
+  });
 }
