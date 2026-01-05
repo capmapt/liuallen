@@ -92,10 +92,6 @@ async function sendMail(
       email: env.CONTACT_FROM_EMAIL,
       name: 'liuallen.com',
     },
-    reply_to: {
-      email: payload.email,
-      name: payload.name,
-    },
     subject,
     content: [
       {
