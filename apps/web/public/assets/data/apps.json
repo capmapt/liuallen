@@ -5,7 +5,12 @@
     "icon": "🇨🇳",
     "description": "交互式汉字学习应用，通过语音识别、笔画动画和智能讲解帮助学习汉字书写",
     "longDescription": "基于Web Speech API的智能汉字学习应用。支持语音识别输入、实时笔画动画演示、智能语音讲解。内置258个常用汉字，采用Hanzi Writer进行笔画渲染，提供沉浸式的学习体验。",
-    "tags": ["教育", "语音识别", "中文", "AI"],
+    "tags": [
+      "教育",
+      "语音识别",
+      "中文",
+      "AI"
+    ],
     "url": "/apps/hanzi-teacher/index.html",
     "github": "https://github.com/capmapt/liuallen",
     "version": "1.0.0",
@@ -17,7 +22,11 @@
     "icon": "⏱️",
     "description": "番茄工作法计时器，帮助你科学规划工作与休息时间",
     "longDescription": "一款基于番茄工作法的专注计时器，提供25分钟工作 + 5分钟休息的默认节奏，可自定义时长并记录完成的番茄数。支持桌面通知与键盘快捷键，适合开发者与学生提升效率。",
-    "tags": ["效率", "工具", "时间管理"],
+    "tags": [
+      "效率",
+      "工具",
+      "时间管理"
+    ],
     "url": "/apps/focus-flow/index.html",
     "github": "https://github.com/capmapt/liuallen",
     "version": "0.9.0",
@@ -29,10 +38,31 @@
     "icon": "📝",
     "description": "所见即所得的Markdown速记本，随时记录灵感",
     "longDescription": "轻量级的Markdown笔记工具，支持实时预览、自动保存和快捷模板。适合在浏览器中快速记录灵感、会议纪要或技术文档草稿。",
-    "tags": ["创意", "效率", "笔记"],
+    "tags": [
+      "创意",
+      "效率",
+      "笔记"
+    ],
     "url": "/apps/markdown-notes/index.html",
     "github": "https://github.com/capmapt/liuallen",
     "version": "0.7.0",
     "featured": false
+  },
+  {
+    "id": "my-daily",
+    "name": "My Daily 日程树洞",
+    "icon": "??",
+    "description": "邮件驱动的日程记录工具，定时提醒并通过回复沉淀每日生活",
+    "longDescription": "My Daily 是一个邮件优先的日程树洞：设定每日/每周发送提醒的时间，系统按频率发送邮件，用户通过回复记录当天日程。结合回复与历史记录，自动生成上周/去年回顾提示，适合做长期习惯与生活复盘。",
+    "tags": [
+      "日记",
+      "邮件",
+      "提醒",
+      "复盘"
+    ],
+    "url": "/apps/my-daily/index.html",
+    "github": "https://github.com/capmapt/liuallen",
+    "version": "0.1.0",
+    "featured": true
   }
 ]

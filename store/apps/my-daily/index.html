@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Daily · 日程树洞</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: "Space Grotesk", "Manrope", "Segoe UI", sans-serif;
+      color: #101418;
+      background: #f7f2ea;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: radial-gradient(circle at 15% 20%, rgba(255, 149, 102, 0.25), transparent 42%),
+        radial-gradient(circle at 85% 0%, rgba(99, 102, 241, 0.18), transparent 40%),
+        #f7f2ea;
+      padding: 32px 18px 48px;
+    }
+    .shell {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 24px;
+    }
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .brand-badge {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, #ff7a18, #facc15);
+      color: #0b0f1a;
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.4rem);
+      letter-spacing: -0.02em;
+    }
+    .subtitle {
+      margin: 6px 0 0;
+      color: #4b5563;
+      font-size: 1rem;
+    }
+    .pill {
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: #111827;
+      color: #f8fafc;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 22px 50px rgba(15, 23, 42, 0.12);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+    }
+    .card h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+    .card p {
+      margin: 0 0 16px;
+      color: #4b5563;
+    }
+    label {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #1f2937;
+      display: block;
+      margin-bottom: 6px;
+    }
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 88px;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #111827;
+      color: #f9fafb;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    button.secondary {
+      background: #f1f5f9;
+      color: #111827;
+    }
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+    }
+    .schedule-list,
+    .reply-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .item strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+    .meta {
+      font-size: 0.85rem;
+      color: #64748b;
+    }
+    .stats {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .stat {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.06);
+      font-weight: 600;
+      color: #0f172a;
+    }
+    .note {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header>
+      <div class="brand">
+        <div class="brand-badge">MD</div>
+        <div>
+          <h1>My Daily · 日程树洞</h1>
+          <p class="subtitle">邮件日程提醒 + 回复记录，让你回顾昨天、上周、去年做过什么。</p>
+        </div>
+      </div>
+      <div class="pill">Email-first Memory OS</div>
+    </header>
+
+    <div class="layout">
+      <div class="card">
+        <h2>发送计划</h2>
+        <p>设置每日提醒时间和频率，系统会按计划发送提醒邮件。</p>
+        <div class="field">
+          <label for="dailyTime">每日提醒时间</label>
+          <input id="dailyTime" type="time" value="20:30" />
+        </div>
+        <div class="field">
+          <label for="frequency">发送频率</label>
+          <select id="frequency">
+            <option value="daily">每日</option>
+            <option value="weekdays">工作日</option>
+            <option value="weekly">每周</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="recipient">收件人邮箱</label>
+          <input id="recipient" type="email" placeholder="you@example.com" />
+        </div>
+        <div class="field">
+          <label for="prompt">今日提问</label>
+          <textarea id="prompt">今天完成了什么？有哪些值得记录的进展？</textarea>
+        </div>
+        <div class="actions">
+          <button id="saveBtn">保存设置</button>
+          <button class="secondary" id="testBtn">发送测试邮件</button>
+          <button class="secondary" id="addScheduleBtn">添加计划</button>
+        </div>
+        <div class="schedule-list" id="scheduleList"></div>
+        <p class="note">提示：此演示版会将计划保存在浏览器本地。</p>
+      </div>
+
+      <div class="card">
+        <h2>回复与洞察</h2>
+        <p>回复邮件后，系统会整理你的日程与关键词，形成回顾提醒。</p>
+        <div class="actions">
+          <button class="secondary" id="simulateBtn">模拟回复</button>
+          <button class="secondary" id="insightBtn">生成回顾</button>
+        </div>
+        <div class="reply-list" id="replyList"></div>
+        <div class="stats" id="insightPanel"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dailyTime = document.getElementById('dailyTime');
+    const frequency = document.getElementById('frequency');
+    const recipient = document.getElementById('recipient');
+    const prompt = document.getElementById('prompt');
+    const scheduleList = document.getElementById('scheduleList');
+    const replyList = document.getElementById('replyList');
+    const insightPanel = document.getElementById('insightPanel');
+
+    const storageKey = 'my-daily:settings';
+    const scheduleKey = 'my-daily:schedules';
+    const replyKey = 'my-daily:replies';
+
+    const defaultSettings = {
+      dailyTime: '20:30',
+      frequency: 'daily',
+      recipient: '',
+      prompt: '今天完成了什么？有哪些值得记录的进展？',
+    };
+
+    function loadSettings() {
+      const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      const settings = saved || defaultSettings;
+      dailyTime.value = settings.dailyTime;
+      frequency.value = settings.frequency;
+      recipient.value = settings.recipient;
+      prompt.value = settings.prompt;
+    }
+
+    function saveSettings() {
+      const settings = {
+        dailyTime: dailyTime.value,
+        frequency: frequency.value,
+        recipient: recipient.value,
+        prompt: prompt.value,
+      };
+      localStorage.setItem(storageKey, JSON.stringify(settings));
+    }
+
+    function loadSchedules() {
+      return JSON.parse(localStorage.getItem(scheduleKey) || '[]');
+    }
+
+    function saveSchedules(items) {
+      localStorage.setItem(scheduleKey, JSON.stringify(items));
+    }
+
+    function renderSchedules() {
+      const schedules = loadSchedules();
+      scheduleList.innerHTML = schedules
+        .map((item) => `<div class="item"><strong>${item.title}</strong><div class="meta">${item.detail}</div></div>`)
+        .join('') || '<div class="item"><strong>暂无计划</strong><div class="meta">添加一个提醒计划开始记录。</div></div>';
+    }
+
+    function getNextTime(freq, time) {
+      const now = new Date();
+      const [hours, minutes] = time.split(':').map(Number);
+      const next = new Date(now);
+      next.setHours(hours, minutes, 0, 0);
+      if (next <= now) {
+        next.setDate(next.getDate() + 1);
+      }
+      if (freq === 'weekdays') {
+        while (next.getDay() === 0 || next.getDay() === 6) {
+          next.setDate(next.getDate() + 1);
+        }
+      }
+      if (freq === 'weekly') {
+        next.setDate(next.getDate() + 7);
+      }
+      return next.toLocaleString();
+    }
+
+    function addSchedule() {
+      saveSettings();
+      const schedules = loadSchedules();
+      schedules.unshift({
+        title: `提醒 · ${frequency.options[frequency.selectedIndex].text}`,
+        detail: `下次发送：${getNextTime(frequency.value, dailyTime.value)} · 收件人：${recipient.value || '未设置'}`,
+      });
+      saveSchedules(schedules.slice(0, 5));
+      renderSchedules();
+    }
+
+    function loadReplies() {
+      return JSON.parse(localStorage.getItem(replyKey) || '[]');
+    }
+
+    function saveReplies(items) {
+      localStorage.setItem(replyKey, JSON.stringify(items));
+    }
+
+    function renderReplies() {
+      const replies = loadReplies();
+      replyList.innerHTML = replies
+        .map((item) => `<div class="item"><strong>${item.title}</strong><div class="meta">${item.detail}</div></div>`)
+        .join('') || '<div class="item"><strong>暂无回复</strong><div class="meta">回复邮件后会在这里归档。</div></div>';
+    }
+
+    function simulateReply() {
+      const replies = loadReplies();
+      const topics = ['产品进展', '融资沟通', '用户访谈', '团队招聘', '学习笔记'];
+      const sample = topics[Math.floor(Math.random() * topics.length)];
+      replies.unshift({
+        title: `收到回复 · ${sample}`,
+        detail: `今天：${new Date().toLocaleDateString()} · 已记录到日程树洞`,
+      });
+      saveReplies(replies.slice(0, 6));
+      renderReplies();
+    }
+
+    function buildInsights() {
+      const replies = loadReplies();
+      const count = replies.length;
+      const last = replies[0];
+      insightPanel.innerHTML = '';
+      insightPanel.appendChild(buildStat(`累计记录 ${count} 条回复`));
+      if (last) {
+        insightPanel.appendChild(buildStat(`最新记录：${last.title}`));
+      }
+      insightPanel.appendChild(buildStat('回顾提醒：一周前完成的任务将自动生成复盘邮件'));
+    }
+
+    function buildStat(text) {
+      const div = document.createElement('div');
+      div.className = 'stat';
+      div.textContent = text;
+      return div;
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      saveSettings();
+      addSchedule();
+    });
+
+    document.getElementById('testBtn').addEventListener('click', () => {
+      saveSettings();
+      alert('演示模式：已模拟发送测试邮件。');
+    });
+
+    document.getElementById('addScheduleBtn').addEventListener('click', addSchedule);
+    document.getElementById('simulateBtn').addEventListener('click', simulateReply);
+    document.getElementById('insightBtn').addEventListener('click', buildInsights);
+
+    loadSettings();
+    renderSchedules();
+    renderReplies();
+    buildInsights();
+  </script>
+</body>
+</html>
