@@ -2,8 +2,6 @@ name = "maildiary-worker"
 main = "apps/worker/src/index.ts"
 compatibility_date = "2024-05-01"
 workers_dev = false
-pages_build_command = "pnpm install --frozen-lockfile && pnpm --filter web build"
-pages_build_output_dir = "apps/web/out"
 
 [vars]
 APP_BASE_URL = "https://diary.liuallen.com"
