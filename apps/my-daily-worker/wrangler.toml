@@ -1,0 +1,20 @@
+name = "my-daily-worker"
+main = "src/index.ts"
+compatibility_date = "2024-05-01"
+workers_dev = false
+
+[vars]
+MY_DAILY_FROM_EMAIL = "hello@liuallen.com"
+MY_DAILY_REPLY_DOMAIN = "liuallen.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "my-daily"
+database_id = "TODO_D1_DATABASE_ID"
+
+[triggers]
+crons = ["*/5 * * * *"]
+
+[[routes]]
+pattern = "api.liuallen.com/my-daily/*"
+custom_domain = true

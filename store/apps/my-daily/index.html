@@ -108,6 +108,10 @@
       font-size: 0.95rem;
       color: #0f172a;
     }
+    input[readonly] {
+      background: #f1f5f9;
+      color: #64748b;
+    }
     textarea {
       resize: vertical;
       min-height: 88px;
@@ -175,6 +179,17 @@
       color: #6b7280;
       margin-top: 12px;
     }
+    .status {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .status.success {
+      color: #15803d;
+    }
+    .status.error {
+      color: #b91c1c;
+    }
   </style>
 </head>
 <body>
@@ -211,16 +226,20 @@
           <input id="recipient" type="email" placeholder="you@example.com" />
         </div>
         <div class="field">
+          <label for="timezone">时区</label>
+          <input id="timezone" type="text" readonly />
+        </div>
+        <div class="field">
           <label for="prompt">今日提问</label>
           <textarea id="prompt">今天完成了什么？有哪些值得记录的进展？</textarea>
         </div>
         <div class="actions">
-          <button id="saveBtn">保存设置</button>
+          <button id="saveBtn">保存并启用</button>
           <button class="secondary" id="testBtn">发送测试邮件</button>
-          <button class="secondary" id="addScheduleBtn">添加计划</button>
         </div>
+        <div class="status" id="status"></div>
         <div class="schedule-list" id="scheduleList"></div>
-        <p class="note">提示：此演示版会将计划保存在浏览器本地。</p>
+        <p class="note">提示：保存后会创建真实邮件计划，Cron 每 5 分钟触发。</p>
       </div>
 
       <div class="card">
@@ -240,14 +259,18 @@
     const dailyTime = document.getElementById('dailyTime');
     const frequency = document.getElementById('frequency');
     const recipient = document.getElementById('recipient');
+    const timezone = document.getElementById('timezone');
     const prompt = document.getElementById('prompt');
     const scheduleList = document.getElementById('scheduleList');
     const replyList = document.getElementById('replyList');
     const insightPanel = document.getElementById('insightPanel');
+    const statusEl = document.getElementById('status');
 
     const storageKey = 'my-daily:settings';
     const scheduleKey = 'my-daily:schedules';
     const replyKey = 'my-daily:replies';
+
+    const apiBase = new URLSearchParams(location.search).get('api') || 'https://api.liuallen.com/my-daily';
 
     const defaultSettings = {
       dailyTime: '20:30',
@@ -256,6 +279,11 @@
       prompt: '今天完成了什么？有哪些值得记录的进展？',
     };
 
+    function setStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.className = `status ${type || ''}`;
+    }
+
     function loadSettings() {
       const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
       const settings = saved || defaultSettings;
@@ -263,6 +291,7 @@
       frequency.value = settings.frequency;
       recipient.value = settings.recipient;
       prompt.value = settings.prompt;
+      timezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
     }
 
     function saveSettings() {
@@ -273,6 +302,7 @@
         prompt: prompt.value,
       };
       localStorage.setItem(storageKey, JSON.stringify(settings));
+      return settings;
     }
 
     function loadSchedules() {
@@ -287,37 +317,7 @@
       const schedules = loadSchedules();
       scheduleList.innerHTML = schedules
         .map((item) => `<div class="item"><strong>${item.title}</strong><div class="meta">${item.detail}</div></div>`)
-        .join('') || '<div class="item"><strong>暂无计划</strong><div class="meta">添加一个提醒计划开始记录。</div></div>';
-    }
-
-    function getNextTime(freq, time) {
-      const now = new Date();
-      const [hours, minutes] = time.split(':').map(Number);
-      const next = new Date(now);
-      next.setHours(hours, minutes, 0, 0);
-      if (next <= now) {
-        next.setDate(next.getDate() + 1);
-      }
-      if (freq === 'weekdays') {
-        while (next.getDay() === 0 || next.getDay() === 6) {
-          next.setDate(next.getDate() + 1);
-        }
-      }
-      if (freq === 'weekly') {
-        next.setDate(next.getDate() + 7);
-      }
-      return next.toLocaleString();
-    }
-
-    function addSchedule() {
-      saveSettings();
-      const schedules = loadSchedules();
-      schedules.unshift({
-        title: `提醒 · ${frequency.options[frequency.selectedIndex].text}`,
-        detail: `下次发送：${getNextTime(frequency.value, dailyTime.value)} · 收件人：${recipient.value || '未设置'}`,
-      });
-      saveSchedules(schedules.slice(0, 5));
-      renderSchedules();
+        .join('') || '<div class="item"><strong>暂无计划</strong><div class="meta">保存后会生成第一条真实提醒计划。</div></div>';
     }
 
     function loadReplies() {
@@ -366,17 +366,80 @@
       return div;
     }
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
-      saveSettings();
-      addSchedule();
+    async function createSchedule() {
+      const settings = saveSettings();
+      setStatus('正在创建计划...', '');
+
+      const response = await fetch(`${apiBase}/schedules`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          email: settings.recipient,
+          timeZone: timezone.value,
+          sendTime: settings.dailyTime,
+          frequency: settings.frequency,
+          prompt: settings.prompt,
+        }),
+      });
+
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload.ok !== true) {
+        setStatus(payload.error || '创建计划失败', 'error');
+        return null;
+      }
+
+      const schedule = payload.schedule;
+      const schedules = loadSchedules();
+      schedules.unshift({
+        id: schedule.id,
+        title: `提醒 · ${frequency.options[frequency.selectedIndex].text}`,
+        detail: `下次发送：${new Date(schedule.nextSendAt).toLocaleString()} · 收件人：${schedule.email}`,
+      });
+      saveSchedules(schedules.slice(0, 5));
+      renderSchedules();
+      setStatus('计划已创建并启用。', 'success');
+      return schedule;
+    }
+
+    async function sendTest(scheduleId) {
+      setStatus('正在发送测试邮件...', '');
+      const response = await fetch(`${apiBase}/test`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          scheduleId: scheduleId || '',
+          email: recipient.value,
+          prompt: prompt.value,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok || payload.ok !== true) {
+        setStatus(payload.error || '测试邮件发送失败', 'error');
+        return;
+      }
+      setStatus('测试邮件已发送，请查收。', 'success');
+    }
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const schedule = await createSchedule();
+      if (schedule) {
+        setStatus('计划已保存，Cron 将按频率发送提醒。', 'success');
+      }
     });
 
-    document.getElementById('testBtn').addEventListener('click', () => {
-      saveSettings();
-      alert('演示模式：已模拟发送测试邮件。');
+    document.getElementById('testBtn').addEventListener('click', async () => {
+      const schedules = loadSchedules();
+      const latest = schedules[0];
+      if (!latest || !latest.id) {
+        const schedule = await createSchedule();
+        if (schedule) {
+          await sendTest(schedule.id);
+        }
+        return;
+      }
+      await sendTest(latest.id);
     });
 
-    document.getElementById('addScheduleBtn').addEventListener('click', addSchedule);
     document.getElementById('simulateBtn').addEventListener('click', simulateReply);
     document.getElementById('insightBtn').addEventListener('click', buildInsights);
 
