@@ -35,23 +35,23 @@ const copy = {
     hero: {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
-        'Building SVTR.ai — a cross-border AI founder & investor network. I invest and incubate AI startups, and run an AI build studio that helps founders ship products fast.',
+        'Building SVTR.AI — a cross-border AI founder & investor network. I invest and incubate AI startups, and run an AI build studio that helps founders ship products fast.',
       primaryCta: 'Book a meeting',
       secondaryCta: 'Email',
       availability: 'Based near Stanford / Palo Alto. Open to: founders, investors, partners.',
       badges: ['AI founders + investors', 'Cross-border network', 'Silicon Valley'],
-      cardTitle: 'SVTR.ai ecosystem',
+      cardTitle: 'SVTR.AI ecosystem',
       cardBody:
         'Media, community, events, and a database that connect AI founders, investors, and operators across the U.S. and China.',
-      cardCta: 'Explore SVTR.ai',
+      cardCta: 'Explore SVTR.AI',
     },
     whatIDo: {
       kicker: 'What I do',
-      title: 'Building the SVTR.ai ecosystem',
+      title: 'Building the SVTR.AI ecosystem',
       subtitle: 'Three ways I support AI founders and investors.',
       cards: [
         {
-          title: 'SVTR.ai Ecosystem',
+          title: 'SVTR.AI Ecosystem',
           description: 'Media + community + events + database bridging US–China AI founders/investors.',
         },
         {
@@ -70,10 +70,10 @@ const copy = {
       subtitle: 'Focused on ecosystem building, investing, and founder enablement.',
       cards: [
         {
-          title: 'SVTR.ai',
+          title: 'SVTR.AI',
           description: 'Cross-border AI founder & investor network.',
           href: 'https://svtr.ai',
-          linkLabel: 'Visit SVTR.ai',
+          linkLabel: 'Visit SVTR.AI',
         },
         {
           title: 'AI 创投库',
@@ -155,22 +155,22 @@ const copy = {
     hero: {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
-        '打造 SVTR.ai——连接中美 AI 创业者与投资人的跨境网络。我投资并孵化 AI 初创公司，也运营 AI 搭建工作室，帮助创始人快速落地产品。',
+        '打造 SVTR.AI——连接中美 AI 创业者与投资人的跨境网络。我投资并孵化 AI 初创公司，也运营 AI 搭建工作室，帮助创始人快速落地产品。',
       primaryCta: '预约会议',
       secondaryCta: '发送邮件',
       availability: '常驻斯坦福 / 帕洛阿尔托附近。开放合作：创业者、投资人、合作伙伴。',
       badges: ['AI 创业者 + 投资人', '跨境生态', '硅谷'],
-      cardTitle: 'SVTR.ai 生态',
+      cardTitle: 'SVTR.AI 生态',
       cardBody: '媒体、社区、活动与数据库，连接中美 AI 创业者、投资人和运营者。',
-      cardCta: '了解 SVTR.ai',
+      cardCta: '了解 SVTR.AI',
     },
     whatIDo: {
       kicker: '我在做什么',
-      title: '建设 SVTR.ai 生态',
+      title: '建设 SVTR.AI 生态',
       subtitle: '支持 AI 创业者与投资人的三种方式。',
       cards: [
         {
-          title: 'SVTR.ai 生态',
+          title: 'SVTR.AI 生态',
           description: '媒体 + 社区 + 活动 + 数据库，连接中美 AI 创业者/投资人。',
         },
         {
@@ -189,10 +189,10 @@ const copy = {
       subtitle: '围绕生态建设、投资与创始人赋能。',
       cards: [
         {
-          title: 'SVTR.ai',
+          title: 'SVTR.AI',
           description: '跨境 AI 创业者与投资人网络。',
           href: 'https://svtr.ai',
-          linkLabel: '访问 SVTR.ai',
+          linkLabel: '访问 SVTR.AI',
         },
         {
           title: 'AI 创投库',
@@ -359,15 +359,15 @@ export default function HomePage() {
   return (
     <div className={styles.page}>
       <Head>
-        <title>Allen Liu (Min Liu) — SVTR.ai founder</title>
+        <title>Allen Liu (Min Liu) — SVTR.AI founder</title>
         <meta
           name="description"
-          content="Allen Liu (Min Liu): building SVTR.ai, investing in AI startups, and operating a Silicon Valley build studio."
+          content="Allen Liu (Min Liu): building SVTR.AI, investing in AI startups, and operating a Silicon Valley build studio."
         />
-        <meta property="og:title" content="Allen Liu (Min Liu) — SVTR.ai founder" />
+        <meta property="og:title" content="Allen Liu (Min Liu) — SVTR.AI founder" />
         <meta
           property="og:description"
-          content="Building SVTR.ai, investing in AI startups, and operating an AI build studio for founders."
+          content="Building SVTR.AI, investing in AI startups, and operating an AI build studio for founders."
         />
         <meta property="og:url" content="https://liuallen.com" />
         <meta property="og:type" content="website" />
@@ -375,7 +375,7 @@ export default function HomePage() {
         <meta name="twitter:title" content="Allen Liu (Min Liu)" />
         <meta
           name="twitter:description"
-          content="SVTR.ai founder, AI investor, and operator for fast-moving founder teams."
+          content="SVTR.AI founder, AI investor, and operator for fast-moving founder teams."
         />
         <link rel="canonical" href="https://liuallen.com" />
         <link rel="icon" href="/favicon.svg" />
@@ -387,7 +387,7 @@ export default function HomePage() {
             <span className={styles.brandDot} aria-hidden />
             <div>
               <span>{t.hero.title}</span>
-              <span className={styles.brandMeta}>SVTR.ai founder · AI investor</span>
+              <span className={styles.brandMeta}>SVTR.AI founder · AI investor</span>
             </div>
           </div>
           <div className={styles.navRight}>
@@ -446,7 +446,7 @@ export default function HomePage() {
             <p className={styles.heroNote}>{t.hero.availability}</p>
           </div>
           <div className={styles.heroCard}>
-            <small>SVTR.ai</small>
+            <small>SVTR.AI</small>
             <h3>{t.hero.cardTitle}</h3>
             <p>{t.hero.cardBody}</p>
             <a className={styles.secondaryBtn} href="https://svtr.ai" target="_blank" rel="noreferrer">
@@ -622,7 +622,7 @@ export default function HomePage() {
 
         <footer className={styles.footer}>
           <span>© {new Date().getFullYear()} Allen Liu (Min Liu)</span>
-          <span>liuallen.com · SVTR.ai</span>
+          <span>liuallen.com · SVTR.AI</span>
         </footer>
       </div>
     </div>
