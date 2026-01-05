@@ -1,12 +1,20 @@
 :root {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #0f172a;
-  background-color: #f8fafc;
+  background-color: #f7f9fc;
+  line-height: 1.6;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   margin: 0;
-  background-color: #f8fafc;
+  background: radial-gradient(circle at 20% 20%, rgba(124, 58, 237, 0.08), transparent 35%),
+    radial-gradient(circle at 80% 0%, rgba(34, 197, 94, 0.05), transparent 30%),
+    #f7f9fc;
+  color: #0f172a;
 }
 
 a {
@@ -14,50 +22,20 @@ a {
   text-decoration: none;
 }
 
-* {
-  box-sizing: border-box;
+a:hover {
+  text-decoration: underline;
 }
 
-main {
-  padding: 2rem;
-  max-width: 960px;
-  margin: 0 auto;
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 button {
-  cursor: pointer;
-  border: none;
-  border-radius: 8px;
-  padding: 0.75rem 1.25rem;
-  background: #2563eb;
-  color: white;
-  font-weight: 600;
+  font-family: inherit;
 }
 
-input,
-select,
-textarea {
-  border-radius: 8px;
-  border: 1px solid #cbd5f5;
-  padding: 0.75rem 1rem;
-  width: 100%;
-  font-size: 1rem;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-  margin-bottom: 1.5rem;
-}
-
-.flex {
-  display: flex;
-}
-
-.flex-between {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+:focus-visible {
+  outline: 3px solid #7c3aed;
+  outline-offset: 2px;
 }
