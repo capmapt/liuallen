@@ -319,11 +319,22 @@
   color: #0ea5e9;
 }
 
-.contactLayout {
+.contactGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 16px;
+  gap: 24px;
   align-items: start;
+}
+
+.contactDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.contactNotes {
+  display: grid;
+  gap: 6px;
 }
 
 .contactForm {

@@ -526,8 +526,8 @@ export default function HomePage() {
         </section>
 
         <section id="contact" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
+          <div className={styles.contactGrid}>
+            <div className={styles.contactDetails}>
               <p className={styles.subtle}>{t.contact.kicker}</p>
               <h2 className={styles.sectionTitle}>{t.contact.title}</h2>
               <p className={styles.sectionSubtitle}>{t.contact.subtitle}</p>
@@ -544,13 +544,10 @@ export default function HomePage() {
                   {t.hero.secondaryCta}
                 </a>
               </div>
-            </div>
-          </div>
-
-          <div className={styles.contactLayout}>
-            <div>
-              <p className={styles.subtle}>{t.contact.note}</p>
-              <p className={styles.subtle}>{t.contact.emailLabel}</p>
+              <div className={styles.contactNotes}>
+                <p className={styles.subtle}>{t.contact.note}</p>
+                <p className={styles.subtle}>{t.contact.emailLabel}</p>
+              </div>
             </div>
             <form className={styles.contactForm} onSubmit={handleSubmit}>
               <div className={styles.field}>
