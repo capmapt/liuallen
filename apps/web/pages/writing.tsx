@@ -19,7 +19,7 @@ export default function WritingPage() {
           Explore <a href="/apps">the app store</a> for product experiments.
         </li>
         <li>
-          Email <a href="mailto:allen@liuallen.com">allen@liuallen.com</a> if you want drafts.
+          Email <a href="mailto:liumin.gsm@gmail.com">liumin.gsm@gmail.com</a> if you want drafts.
         </li>
       </ul>
     </main>

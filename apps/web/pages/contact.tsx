@@ -10,11 +10,11 @@ export default function ContactPage() {
       <h1 style={{ marginBottom: '0.5rem' }}>Contact</h1>
       <p style={{ marginTop: 0, color: '#4b5563' }}>
         For the fastest response, use the <a href="/#contact">homepage contact form</a>. You can also reach me directly at{' '}
-        <a href="mailto:allen@liuallen.com">allen@liuallen.com</a> or schedule a call.
+        <a href="mailto:liumin.gsm@gmail.com">liumin.gsm@gmail.com</a> or schedule a meeting.
       </p>
       <div style={{ marginTop: '1.5rem', display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
         <a
-          href="https://cal.com/PLACEHOLDER"
+          href="https://calendly.com/liumin-gsm-sdu/1-on-1"
           style={{
             background: 'linear-gradient(135deg, #f97316, #f59e0b)',
             color: '#0b0f1a',
@@ -24,10 +24,10 @@ export default function ContactPage() {
             fontWeight: 600,
           }}
         >
-          Book a call
+          Book a meeting
         </a>
         <a
-          href="mailto:allen@liuallen.com"
+          href="mailto:liumin.gsm@gmail.com"
           style={{
             border: '1px solid #e6e2dc',
             color: '#0b0f1a',
