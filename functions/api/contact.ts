@@ -65,11 +65,15 @@ async function verifyTurnstile(token: string, secret: string, remoteip: string) 
   return Boolean(data.success);
 }
 
-async function sendMail(env: Env, payload: { name: string; email: string; message: string; referer?: string }) {
+async function sendMail(
+  env: Env,
+  payload: { name: string; email: string; message: string; topic?: string; referer?: string },
+) {
   if (!env.CONTACT_TO_EMAIL || !env.CONTACT_FROM_EMAIL) {
     throw new Error('Missing CONTACT_TO_EMAIL or CONTACT_FROM_EMAIL');
   }
   const subject = `New message from liuallen.com: ${payload.name}`;
+  const topicLine = payload.topic ? `Topic: ${payload.topic}\n` : '';
   const safeLines = payload.message
     .split('\n')
     .map((line) => escapeHtml(line.trim()))
@@ -95,11 +99,17 @@ async function sendMail(env: Env, payload: { name: string; email: string; messag
     content: [
       {
         type: 'text/plain',
-        value: `Name: ${payload.name}\nEmail: ${payload.email}\nFrom: ${payload.referer ?? 'unknown'}\n\n${payload.message}`,
+        value: `Name: ${payload.name}\nEmail: ${payload.email}\n${topicLine}From: ${
+          payload.referer ?? 'unknown'
+        }\n\n${payload.message}`,
       },
       {
         type: 'text/html',
-        value: `<p><strong>Name:</strong> ${escapeHtml(payload.name)}</p><p><strong>Email:</strong> ${escapeHtml(payload.email)}</p><p><strong>From:</strong> ${escapeHtml(payload.referer ?? 'unknown')}</p><p>${safeLines}</p>`,
+        value: `<p><strong>Name:</strong> ${escapeHtml(payload.name)}</p><p><strong>Email:</strong> ${escapeHtml(
+          payload.email,
+        )}</p>${payload.topic ? `<p><strong>Topic:</strong> ${escapeHtml(payload.topic)}</p>` : ''}<p><strong>From:</strong> ${escapeHtml(
+          payload.referer ?? 'unknown',
+        )}</p><p>${safeLines}</p>`,
       },
     ],
   };
@@ -119,7 +129,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const { request, env } = context;
   const ip = getClientIp(request);
 
-  let body: { name?: string; email?: string; message?: string; turnstileToken?: string };
+  let body: { name?: string; email?: string; message?: string; topic?: string; turnstileToken?: string };
   try {
     body = await request.json();
   } catch (err) {
@@ -133,6 +143,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   const email = body.email?.trim();
   const message = body.message?.trim();
   const token = body.turnstileToken?.trim();
+  const topic = body.topic?.trim();
 
   if (!name || !email || !message) {
     return new Response(JSON.stringify({ ok: false, error: 'Name, email, and message are required.' }), {
@@ -180,7 +191,7 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
   }
 
   try {
-    await sendMail(env, { name, email, message, referer: request.headers.get('referer') ?? undefined });
+    await sendMail(env, { name, email, message, topic, referer: request.headers.get('referer') ?? undefined });
     return new Response(JSON.stringify({ ok: true }), {
       status: 200,
       headers: { 'content-type': 'application/json' },

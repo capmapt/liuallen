@@ -1,4 +1,4 @@
-# liuallen.com — Allen Liu (Min Liu)
+# liuallen.com - Allen Liu (Min Liu)
 
 Personal website for Allen Liu (Min Liu): AI/VC ecosystem builder, SVTR founder, and AI infrastructure + venture operator. The site is a single-page Next.js export hosted on Cloudflare Pages with a serverless contact endpoint using Pages Functions and MailChannels.
 
@@ -7,19 +7,19 @@ Personal website for Allen Liu (Min Liu): AI/VC ecosystem builder, SVTR founder,
 - **Build command:** `pnpm install --frozen-lockfile && pnpm --filter web build`
 - **Output directory:** `apps/web/out`
 
-Environment variables to set in Cloudflare Pages (Project → Settings → Environment Variables):
-- `CONTACT_TO_EMAIL` — destination inbox for contact form messages (required)
-- `CONTACT_FROM_EMAIL` — sender email to use with MailChannels (required)
-- `TURNSTILE_SECRET` — Turnstile secret key for server-side verification (optional but recommended)
-- `TURNSTILE_SITEKEY` — Turnstile site key (optional; pairs with `NEXT_PUBLIC_TURNSTILE_SITEKEY`)
-- `NEXT_PUBLIC_TURNSTILE_SITEKEY` — expose the site key to the client so the widget renders (optional)
+Environment variables to set in Cloudflare Pages (Project Settings -> Environment Variables):
+- `CONTACT_TO_EMAIL` - destination inbox for contact form messages (required)
+- `CONTACT_FROM_EMAIL` - sender email to use with MailChannels (required)
+- `TURNSTILE_SECRET` - Turnstile secret key for server-side verification (optional but recommended)
+- `TURNSTILE_SITEKEY` - Turnstile site key (optional; pairs with `NEXT_PUBLIC_TURNSTILE_SITEKEY`)
+- `NEXT_PUBLIC_TURNSTILE_SITEKEY` - expose the site key to the client so the widget renders (optional)
 
 ## Local development
 ```bash
 pnpm install
 pnpm --filter web dev
 ```
-The site runs at `http://localhost:3000`. The contact form will attempt to POST to `/api/contact`; you can test locally with Wrangler’s Pages dev server or stub the endpoint by running `pnpm wrangler pages dev` from the repo root.
+The site runs at `http://localhost:3000`. The contact form will attempt to POST to `/api/contact`; you can test locally with Wrangler's Pages dev server or stub the endpoint by running `pnpm wrangler pages dev` from the repo root.
 
 Build locally to mirror Cloudflare Pages:
 ```bash
@@ -32,6 +32,11 @@ The static export lands in `apps/web/out`.
 - Validates name/email/message, enforces Turnstile verification when keys are provided, and applies a best-effort in-memory rate limit when Turnstile is absent.
 - Sends mail via MailChannels using `CONTACT_FROM_EMAIL` as the sender and `CONTACT_TO_EMAIL` as the recipient. If sending fails, the response includes a helpful error message.
 - Optional Turnstile widget is rendered on the client when `NEXT_PUBLIC_TURNSTILE_SITEKEY` is set; otherwise requests rely on rate limiting.
+
+## Updating links and content
+- **Cal.com link**: update the `https://cal.com/PLACEHOLDER` URL in `apps/web/pages/index.tsx` and `apps/web/pages/contact.tsx`.
+- **Writing links**: replace the placeholder writing items in `apps/web/pages/index.tsx` (search for `Latest writing`) with real post links.
+- **Projects**: edit the "Selected projects" cards in `apps/web/pages/index.tsx` to point to live URLs (or remove placeholders).
 
 ## Routing and domains
 - `_redirects` ensures `www.liuallen.com` redirects to `https://liuallen.com` and that any unknown route falls back to `/index.html` (useful for SPA-style navigation).
