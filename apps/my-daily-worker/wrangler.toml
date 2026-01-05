@@ -10,11 +10,11 @@ MY_DAILY_REPLY_DOMAIN = "liuallen.com"
 [[d1_databases]]
 binding = "DB"
 database_name = "my-daily"
-database_id = "TODO_D1_DATABASE_ID"
+database_id = "4848415a-82da-42ff-8b90-01c5275b5d22"
 
 [triggers]
 crons = ["*/5 * * * *"]
 
 [[routes]]
 pattern = "api.liuallen.com/my-daily/*"
-custom_domain = true
+zone_name = "liuallen.com"
