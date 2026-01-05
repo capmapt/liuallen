@@ -126,86 +126,109 @@ async function sendMail(
 }
 
 export const onRequestPost: PagesFunction<Env> = async (context) => {
-  const { request, env } = context;
-  const ip = getClientIp(request);
-
-  let body: { name?: string; email?: string; message?: string; topic?: string; turnstileToken?: string };
   try {
-    body = await request.json();
-  } catch (err) {
-    return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON payload' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
-  }
+    const { request, env } = context;
+    const ip = getClientIp(request);
 
-  const name = body.name?.trim();
-  const email = body.email?.trim();
-  const message = body.message?.trim();
-  const token = body.turnstileToken?.trim();
-  const topic = body.topic?.trim();
-
-  if (!name || !email || !message) {
-    return new Response(JSON.stringify({ ok: false, error: 'Name, email, and message are required.' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
-  }
-
-  if (!isValidEmail(email)) {
-    return new Response(JSON.stringify({ ok: false, error: 'Enter a valid email address.' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
-  }
-
-  if (message.length > 4000) {
-    return new Response(JSON.stringify({ ok: false, error: 'Message is too long.' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
-  }
-
-  if (env.TURNSTILE_SECRET) {
-    if (!token) {
-      return new Response(JSON.stringify({ ok: false, error: 'Verification required.' }), {
+    let body: { name?: string; email?: string; message?: string; topic?: string; turnstileToken?: string };
+    try {
+      body = await request.json();
+    } catch (err) {
+      return new Response(JSON.stringify({ ok: false, error: 'Invalid JSON payload' }), {
         status: 400,
         headers: { 'content-type': 'application/json' },
       });
     }
-    const valid = await verifyTurnstile(token, env.TURNSTILE_SECRET, ip);
-    if (!valid) {
-      return new Response(JSON.stringify({ ok: false, error: 'Unable to verify. Please retry.' }), {
+
+    const name = body.name?.trim();
+    const email = body.email?.trim();
+    const message = body.message?.trim();
+    const token = body.turnstileToken?.trim();
+    const topic = body.topic?.trim();
+
+    if (!name || !email || !message) {
+      return new Response(JSON.stringify({ ok: false, error: 'Name, email, and message are required.' }), {
         status: 400,
         headers: { 'content-type': 'application/json' },
       });
     }
-  } else {
-    const rate = touchRate(ip);
-    if (!rate.allowed) {
-      return new Response(JSON.stringify({ ok: false, error: 'Too many requests. Please try later.' }), {
-        status: 429,
-        headers: { 'content-type': 'application/json', 'retry-after': rate.retryAfter.toString() },
+
+    if (!isValidEmail(email)) {
+      return new Response(JSON.stringify({ ok: false, error: 'Enter a valid email address.' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
       });
     }
-  }
 
-  try {
-    await sendMail(env, { name, email, message, topic, referer: request.headers.get('referer') ?? undefined });
-    return new Response(JSON.stringify({ ok: true }), {
-      status: 200,
-      headers: { 'content-type': 'application/json' },
-    });
+    if (message.length > 4000) {
+      return new Response(JSON.stringify({ ok: false, error: 'Message is too long.' }), {
+        status: 400,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+
+    if (env.TURNSTILE_SECRET) {
+      if (!token) {
+        return new Response(JSON.stringify({ ok: false, error: 'Verification required.' }), {
+          status: 400,
+          headers: { 'content-type': 'application/json' },
+        });
+      }
+      const valid = await verifyTurnstile(token, env.TURNSTILE_SECRET, ip);
+      if (!valid) {
+        return new Response(JSON.stringify({ ok: false, error: 'Unable to verify. Please retry.' }), {
+          status: 400,
+          headers: { 'content-type': 'application/json' },
+        });
+      }
+    } else {
+      const rate = touchRate(ip);
+      if (!rate.allowed) {
+        return new Response(JSON.stringify({ ok: false, error: 'Too many requests. Please try later.' }), {
+          status: 429,
+          headers: { 'content-type': 'application/json', 'retry-after': rate.retryAfter.toString() },
+        });
+      }
+    }
+
+    try {
+      await sendMail(env, { name, email, message, topic, referer: request.headers.get('referer') ?? undefined });
+      return new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    } catch (err) {
+      console.error('contact form send failed', err);
+      const message =
+        err instanceof Error ? err.message : 'Unable to deliver message. Please email instead.';
+      return new Response(JSON.stringify({ ok: false, error: message }), {
+        status: 502,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
   } catch (err) {
-    console.error('contact form send failed', err);
+    console.error('contact form handler crashed', err);
     const message =
-      err instanceof Error ? err.message : 'Unable to deliver message. Please email instead.';
+      err instanceof Error ? err.message : 'Unexpected error. Please email instead.';
     return new Response(JSON.stringify({ ok: false, error: message }), {
-      status: 502,
+      status: 500,
       headers: { 'content-type': 'application/json' },
     });
   }
 };
+
+export const onRequestGet: PagesFunction<Env> = async ({ env }) =>
+  new Response(
+    JSON.stringify({
+      ok: true,
+      env: {
+        hasTo: Boolean(env.CONTACT_TO_EMAIL),
+        hasFrom: Boolean(env.CONTACT_FROM_EMAIL),
+        hasTurnstile: Boolean(env.TURNSTILE_SECRET),
+      },
+    }),
+    { status: 200, headers: { 'content-type': 'application/json' } },
+  );
 
 export const onRequestOptions: PagesFunction = async ({ request }) => {
   const origin = request.headers.get('origin');
