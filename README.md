@@ -1,119 +1,42 @@
-# MailDiary
+# liuallen.com — Allen Liu (Min Liu)
 
-MailDiary is an email-first journaling tool. Users sign in with a magic link, receive scheduled prompts, reply with text or attachments, and browse their archive on the web.
+Personal website for Allen Liu (Min Liu): AI/VC ecosystem builder, SVTR founder, and AI infrastructure + venture operator. The site is a single-page Next.js export hosted on Cloudflare Pages with a serverless contact endpoint using Pages Functions and MailChannels.
 
-It also powers https://liuallen.com — a personal homepage for Allen Liu (Min Liu) with a bilingual hero, project highlights, and a contact form.
+## Cloudflare Pages settings
+- **Root directory:** `.` (repository root; includes the `functions/` folder for the contact API)
+- **Build command:** `pnpm install --frozen-lockfile && pnpm --filter web build`
+- **Output directory:** `apps/web/out`
 
-## Architecture
+Environment variables to set in Cloudflare Pages (Project → Settings → Environment Variables):
+- `CONTACT_TO_EMAIL` — destination inbox for contact form messages (required)
+- `CONTACT_FROM_EMAIL` — sender email to use with MailChannels (required)
+- `TURNSTILE_SECRET` — Turnstile secret key for server-side verification (optional but recommended)
+- `TURNSTILE_SITEKEY` — Turnstile site key (optional; pairs with `NEXT_PUBLIC_TURNSTILE_SITEKEY`)
+- `NEXT_PUBLIC_TURNSTILE_SITEKEY` — expose the site key to the client so the widget renders (optional)
 
-- **Frontend**: Next.js (static export) hosted on Cloudflare Pages at `https://diary.liuallen.com`.
-- **API & background work**: Cloudflare Worker (Hono) bound to `https://api.diary.liuallen.com`.
-- **Persistence**: Cloudflare D1 for relational data, R2 for attachments, KV for sessions.
-- **Email**: MailChannels for transactional mail, Cloudflare Email Routing for inbound replies.
-- **Scheduling**: Cron trigger (every 5 minutes) to deliver reminders and generate memory prompts.
-
-## Getting started locally
-
-Requirements: `pnpm`, Node.js 20+, Wrangler.
-
+## Local development
 ```bash
-cp .env.example .env.local
 pnpm install
+pnpm --filter web dev
 ```
+The site runs at `http://localhost:3000`. The contact form will attempt to POST to `/api/contact`; you can test locally with Wrangler’s Pages dev server or stub the endpoint by running `pnpm wrangler pages dev` from the repo root.
 
-### Run the worker
-
+Build locally to mirror Cloudflare Pages:
 ```bash
-pnpm --filter worker dev
+pnpm --filter web build
 ```
+The static export lands in `apps/web/out`.
 
-This starts the Hono API on `http://localhost:8787`. Bindings required for local dev:
+## Contact endpoint (`/api/contact`)
+- Lives in `functions/api/contact.ts` and runs as a Cloudflare Pages Function.
+- Validates name/email/message, enforces Turnstile verification when keys are provided, and applies a best-effort in-memory rate limit when Turnstile is absent.
+- Sends mail via MailChannels using `CONTACT_FROM_EMAIL` as the sender and `CONTACT_TO_EMAIL` as the recipient. If sending fails, the response includes a helpful error message.
+- Optional Turnstile widget is rendered on the client when `NEXT_PUBLIC_TURNSTILE_SITEKEY` is set; otherwise requests rely on rate limiting.
 
-```bash
-wrangler d1 create maildiary-dev
-wrangler d1 execute maildiary-dev --file=./migrations/0001_init.sql
-wrangler r2 bucket create maildiary-dev-attachments
-wrangler kv namespace create maildiary-dev-sessions
-```
+## Routing and domains
+- `_redirects` ensures `www.liuallen.com` redirects to `https://liuallen.com` and that any unknown route falls back to `/index.html` (useful for SPA-style navigation).
+- Set the primary custom domain to `liuallen.com` in Cloudflare Pages. If additional redirects are needed, you can also configure them in the Cloudflare dashboard (Pages Redirect Rules or Bulk Redirects) mirroring the `_redirects` file.
 
-Update `wrangler.toml` (or create `wrangler.dev.toml`) with the new binding IDs. When running locally you can also stub MailChannels by logging requests instead of sending.
-
-### Run the web app
-
-```bash
-cd apps/web
-pnpm dev
-```
-
-The site loads at `http://localhost:3000` and proxies API calls to `http://localhost:8787` via `NEXT_PUBLIC_API_BASE`.
-
-### Updating the liuallen.com homepage
-
-- Homepage content lives in `apps/web/pages/index.tsx` with styles in `apps/web/styles/Home.module.css`.
-- Update the Cal.com link or email in the CTA buttons directly in `index.tsx`.
-- Writing links are currently placeholders in `index.tsx` and `apps/web/pages/writing.tsx`.
-- The previous app store experience is preserved at `/apps` (page file: `apps/web/pages/apps.tsx`).
-
-### Contact form handling
-
-- The contact form posts to the Worker endpoint `POST /contact` and stores submissions in D1 table `contact_messages`.
-- Apply migration `migrations/0002_contact_messages.sql` to create the table.
-- Ensure `APP_BASE_URL` in `wrangler.toml` (or `wrangler.dev.toml`) matches the site origin so CORS allows the form.
-- The web client uses `NEXT_PUBLIC_API_BASE` to reach the Worker; set it to your API origin when running locally or in production.
-
-## Deployment
-
-### Cloudflare resources
-
-1. **D1**: Create a database (e.g. `maildiary-prod`). Apply migrations:
-   ```bash
-   wrangler d1 migrations apply maildiary-prod
-   ```
-2. **R2 bucket**: `maildiary-attachments` for entry uploads.
-3. **KV namespace**: `maildiary-sessions` for session storage.
-4. **Email Routing**:
-   - Add routes for `reminder@diary.liuallen.com` (deliver to MailChannels) and `reply@diary.liuallen.com` (deliver to Worker).
-   - Configure a catch-all to Worker if desired.
-5. **MailChannels**: ensure SPF/DKIM records exist for `diary.liuallen.com`. Add TXT records suggested in the Cloudflare dashboard. Set envelope sender as `reminder@diary.liuallen.com`.
-6. **Cron trigger**: Already defined in `wrangler.toml` (`*/5 * * * *`). Enable after first deploy.
-
-### DNS
-
-- `A`/`CNAME` for `diary.liuallen.com` → Cloudflare Pages project.
-- `CNAME`/`AAAA` for `api.diary.liuallen.com` → Worker route via Cloudflare dashboard.
-- SPF record example: `v=spf1 include:_spf.mx.cloudflare.net -all`.
-- DKIM/DMARC: follow MailChannels guidance; add DKIM CNAMEs and optional DMARC policy.
-
-### Secrets & environment variables
-
-Set via Wrangler / Cloudflare Dashboard:
-
-- `MAILCHANNELS_API_KEY` (if using a dedicated API key; optional for standard integration).
-- Override `MAIL_FROM`, `APP_BASE_URL`, `API_BASE_URL`, `COOKIE_DOMAIN` if needed per environment.
-- `MAGIC_LINK_EXP_MINUTES` to adjust token TTL.
-
-For GitHub Actions, set repository secrets:
-
-- `CLOUDFLARE_ACCOUNT_ID`
-- `CLOUDFLARE_API_TOKEN` (needs permissions: `Workers Scripts`, `Workers KV Storage`, `Pages`, `R2`, `D1` read/write).
-
-### GitHub Actions
-
-- `.github/workflows/deploy-pages.yml` builds the Next.js site (static export) and deploys to Cloudflare Pages project `maildiary-web`.
-- `.github/workflows/deploy-worker.yml` type-checks and deploys the Worker via Wrangler.
-
-## Feature flow
-
-1. **Magic link login**: `/auth/magic-link` issues a token and emails it via MailChannels. `/auth/verify` exchanges for a session cookie stored in KV.
-2. **Reminder configuration**: Reminders stored in D1 with timezone-aware scheduling.
-3. **Cron delivery**: Cron job queries due reminders, generates recall prompts from previous entries, and sends via MailChannels. Replies go to `reply+<userId>@diary.liuallen.com`.
-4. **Inbound email**: Email Worker ingests messages, stores metadata in D1, uploads attachments to R2, and surfaces them in the dashboard.
-5. **Web app**: Client-side fetches with credentialed requests to list/search entries, manage reminders, pause/unsubscribe, and export JSON.
-
-## TODOs / manual steps
-
-- Populate `wrangler.toml` bindings (`database_id`, `id`) with production resource IDs.
-- Configure Email Routing to forward to the Worker and enable DKIM/SPF for MailChannels.
-- Upload branding assets and polish UI.
-- Add rate limiting / abuse protection for magic link requests.
-- Add automated tests and monitoring.
+## Ensuring production access
+- The production URL should be `https://liuallen.com`. Confirm DNS points to Cloudflare Pages and SSL is active. Test the live site plus `/api/contact` after setting environment variables.
+- Preview URLs such as `https://<hash>.liuallen.pages.dev` can return 404 if branch previews are disabled, the project is configured for a custom domain only, or if Access policies restrict unauthenticated visitors. Enable branch previews in the Pages project settings and remove Access restrictions (or add viewer policies) to make preview links reachable. The canonical deployment target remains the apex domain.
