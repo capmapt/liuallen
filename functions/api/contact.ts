@@ -198,7 +198,9 @@ export const onRequestPost: PagesFunction<Env> = async (context) => {
     });
   } catch (err) {
     console.error('contact form send failed', err);
-    return new Response(JSON.stringify({ ok: false, error: 'Unable to deliver message. Please email instead.' }), {
+    const message =
+      err instanceof Error ? err.message : 'Unable to deliver message. Please email instead.';
+    return new Response(JSON.stringify({ ok: false, error: message }), {
       status: 502,
       headers: { 'content-type': 'application/json' },
     });
