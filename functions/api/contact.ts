@@ -2,6 +2,7 @@
 interface Env {
   CONTACT_TO_EMAIL?: string;
   CONTACT_FROM_EMAIL?: string;
+  MAILCHANNELS_API_KEY?: string;
   TURNSTILE_SECRET?: string;
   TURNSTILE_SITEKEY?: string;
 }
@@ -114,9 +115,14 @@ async function sendMail(
     ],
   };
 
+  const headers: Record<string, string> = { 'content-type': 'application/json' };
+  if (env.MAILCHANNELS_API_KEY) {
+    headers['authorization'] = `Bearer ${env.MAILCHANNELS_API_KEY}`;
+    headers['x-api-key'] = env.MAILCHANNELS_API_KEY;
+  }
   const res = await fetch('https://api.mailchannels.net/tx/v1/send', {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers,
     body: JSON.stringify(mailPayload),
   });
   if (!res.ok) {
