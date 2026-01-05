@@ -36,7 +36,7 @@ const copy = {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
         'Building SVTR.ai — a cross-border AI founder & investor network. I invest and incubate AI startups, and run an AI build studio that helps founders ship products fast.',
-      primaryCta: 'Book a call',
+      primaryCta: 'Book a meeting',
       secondaryCta: 'Email',
       availability: 'Based near Stanford / Palo Alto. Open to: founders, investors, partners.',
       badges: ['AI founders + investors', 'Cross-border network', 'Silicon Valley'],
@@ -132,7 +132,7 @@ const copy = {
       subtitle: 'Book a call, send an email, or share the details below.',
       note:
         'I respond fastest with context: who you are, what you are building, and how I can help.',
-      emailLabel: 'Email: allen@liuallen.com',
+      emailLabel: 'Email: liumin.gsm@gmail.com',
       form: {
         name: 'Name',
         email: 'Email',
@@ -156,7 +156,7 @@ const copy = {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
         '打造 SVTR.ai——连接中美 AI 创业者与投资人的跨境网络。我投资并孵化 AI 初创公司，也运营 AI 搭建工作室，帮助创始人快速落地产品。',
-      primaryCta: '预约电话',
+      primaryCta: '预约会议',
       secondaryCta: '发送邮件',
       availability: '常驻斯坦福 / 帕洛阿尔托附近。开放合作：创业者、投资人、合作伙伴。',
       badges: ['AI 创业者 + 投资人', '跨境生态', '硅谷'],
@@ -250,7 +250,7 @@ const copy = {
       title: '一起共建',
       subtitle: '预约电话、发送邮件，或填写表单。',
       note: '我会优先回复信息完整的联系：你是谁、在做什么、需要我怎么支持。',
-      emailLabel: '邮箱：allen@liuallen.com',
+      emailLabel: '邮箱：liumin.gsm@gmail.com',
       form: {
         name: '姓名',
         email: '邮箱',
@@ -431,10 +431,15 @@ export default function HomePage() {
             <h1>{t.hero.title}</h1>
             <p className={styles.heroSubtitle}>{heroDescription}</p>
             <div className={styles.ctaRow}>
-              <a className={styles.primaryBtn} href="https://cal.com/PLACEHOLDER" target="_blank" rel="noreferrer">
+              <a
+                className={styles.primaryBtn}
+                href="https://calendly.com/liumin-gsm-sdu/1-on-1"
+                target="_blank"
+                rel="noreferrer"
+              >
                 {t.hero.primaryCta}
               </a>
-              <a className={styles.secondaryBtn} href="mailto:allen@liuallen.com">
+              <a className={styles.secondaryBtn} href="mailto:liumin.gsm@gmail.com">
                 {t.hero.secondaryCta}
               </a>
             </div>
@@ -527,10 +532,15 @@ export default function HomePage() {
               <h2 className={styles.sectionTitle}>{t.contact.title}</h2>
               <p className={styles.sectionSubtitle}>{t.contact.subtitle}</p>
               <div className={styles.inlineActions}>
-                <a className={styles.primaryBtn} href="https://cal.com/PLACEHOLDER" target="_blank" rel="noreferrer">
+                <a
+                  className={styles.primaryBtn}
+                  href="https://calendly.com/liumin-gsm-sdu/1-on-1"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   {t.hero.primaryCta}
                 </a>
-                <a className={styles.secondaryBtn} href="mailto:allen@liuallen.com">
+                <a className={styles.secondaryBtn} href="mailto:liumin.gsm@gmail.com">
                   {t.hero.secondaryCta}
                 </a>
               </div>
