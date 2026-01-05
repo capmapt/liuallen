@@ -34,7 +34,7 @@ The static export lands in `apps/web/out`.
 - Optional Turnstile widget is rendered on the client when `NEXT_PUBLIC_TURNSTILE_SITEKEY` is set; otherwise requests rely on rate limiting.
 
 ## Updating links and content
-- **Cal.com link**: update the `https://cal.com/PLACEHOLDER` URL in `apps/web/pages/index.tsx` and `apps/web/pages/contact.tsx`.
+- **Scheduling link**: update the Calendly URL in `apps/web/pages/index.tsx` and `apps/web/pages/contact.tsx`.
 - **Writing links**: replace the placeholder writing items in `apps/web/pages/index.tsx` (search for `Latest writing`) with real post links.
 - **Projects**: edit the "Selected projects" cards in `apps/web/pages/index.tsx` to point to live URLs (or remove placeholders).
 
