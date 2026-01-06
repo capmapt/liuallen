@@ -390,14 +390,19 @@
 
       const schedule = payload.schedule;
       const schedules = loadSchedules();
+      const nextSend = schedule.nextSendAt ? new Date(schedule.nextSendAt).toLocaleString() : '稍后生成';
       schedules.unshift({
         id: schedule.id,
         title: `提醒 · ${frequency.options[frequency.selectedIndex].text}`,
-        detail: `下次发送：${new Date(schedule.nextSendAt).toLocaleString()} · 收件人：${schedule.email}`,
+        detail: `下次发送：${nextSend} · 收件人：${schedule.email}`,
       });
       saveSchedules(schedules.slice(0, 5));
       renderSchedules();
-      setStatus('计划已创建并启用。', 'success');
+      if (payload.emailStatus && payload.emailStatus.ok === false) {
+        setStatus(`计划已创建，但确认邮件发送失败：${payload.emailStatus.error || '未知错误'}`, 'error');
+      } else {
+        setStatus('计划已创建并启用，已发送首封确认邮件。', 'success');
+      }
       return schedule;
     }
 
