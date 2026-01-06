@@ -34,20 +34,21 @@ The static export lands in `apps/web/out`.
 - Optional Turnstile widget is rendered on the client when `NEXT_PUBLIC_TURNSTILE_SITEKEY` is set; otherwise requests rely on rate limiting.
 
 ## My Daily app (MailChannels scheduler)
-The My Daily app at `/apps/my-daily` is backed by a dedicated Cloudflare Worker with Cron + D1 storage.
+The My Daily app at `/apps/my-daily` runs on the existing `maildiary-worker` with Cron + D1 storage.
 
 Setup overview:
-- Create a D1 database (e.g. `my-daily`) and apply `migrations/0003_my_daily.sql`.
-- Deploy the worker from `apps/my-daily-worker` (see `apps/my-daily-worker/wrangler.toml`).
-- Add environment variables for the worker:
+- Apply `migrations/0003_my_daily.sql` to the existing `maildiary` D1 database.
+- Deploy `maildiary-worker` with the new `/my-daily` routes.
+- Add environment variables (worker):
   - `MAILCHANNELS_API_KEY` (required)
   - `MY_DAILY_FROM_EMAIL` (default `hello@liuallen.com`)
   - `MY_DAILY_REPLY_DOMAIN` (default `liuallen.com`)
+  - `MY_DAILY_APP_BASE_URL` (default `https://liuallen.com`)
 - Add a MailChannels Domain Lockdown record:
   - TXT `_mailchannels` → `v=mc1 auth=liuallen`
 - Ensure SPF includes MailChannels:
   - `v=spf1 include:_spf.mx.cloudflare.net include:relay.mailchannels.net -all`
-- Email Routing: point `reply+*@liuallen.com` to the worker email handler if you want to capture replies.
+- Email Routing: point `reply+*@liuallen.com` to the `maildiary-worker` email handler to capture replies.
 
 The app reads the API base from `?api=` query param or defaults to `https://api.liuallen.com/my-daily`.
 

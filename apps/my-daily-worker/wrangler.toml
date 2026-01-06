@@ -15,6 +15,3 @@ database_id = "4848415a-82da-42ff-8b90-01c5275b5d22"
 [triggers]
 crons = ["*/5 * * * *"]
 
-[[routes]]
-pattern = "api.liuallen.com/my-daily/*"
-zone_name = "liuallen.com"
