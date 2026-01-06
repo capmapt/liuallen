@@ -225,6 +225,12 @@ function myDailyGetLocalDateKey(timeZone: string, date: Date) {
   return `${parts.year}-${parts.month}-${parts.day}`;
 }
 
+function myDailyFrequencyLabel(frequency: string) {
+  if (frequency === 'weekdays') return '工作日';
+  if (frequency === 'weekly') return '每周';
+  return '每日';
+}
+
 function myDailyComputeNextSend(timeZone: string, frequency: string, sendTime: string) {
   const now = new Date();
   const localParts = myDailyGetLocalParts(timeZone, now);
@@ -328,6 +334,20 @@ app.post('/my-daily/schedules', async (c) => {
     .bind(id, email, timeZone, sendTime, frequency, prompt, weekday, createdAt)
     .run();
 
+  let emailError: string | null = null;
+  const replyDomain = c.env.MY_DAILY_REPLY_DOMAIN ?? MY_DAILY_DEFAULT_REPLY_DOMAIN;
+  const replyTo = `reply+${id}@${replyDomain}`;
+  const subject = 'My Daily 已启用';
+  const welcomePrompt = `你的 My Daily 提醒已创建。之后我们会在 ${sendTime}（${timeZone}）按「${myDailyFrequencyLabel(
+    frequency,
+  )}」发送提醒。\n\n现在就可以直接回复这封邮件，记录今天的日程。`;
+
+  try {
+    await sendMyDailyReminder(c.env, { email, prompt: welcomePrompt, replyTo, subject });
+  } catch (err) {
+    emailError = err instanceof Error ? err.message : '发送失败';
+  }
+
   return c.json({
     ok: true,
     schedule: {
@@ -339,6 +359,7 @@ app.post('/my-daily/schedules', async (c) => {
       prompt,
       nextSendAt: nextSend ? nextSend.toISOString() : null,
     },
+    emailStatus: emailError ? { ok: false, error: emailError } : { ok: true },
   });
 });
 
