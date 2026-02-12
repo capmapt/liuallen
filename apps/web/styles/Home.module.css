@@ -237,6 +237,39 @@
   gap: 14px;
 }
 
+.proofGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.proofCard {
+  background: #111827;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  color: #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 12px 36px rgba(15, 23, 42, 0.24);
+}
+
+.proofValue {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1.1;
+  margin: 0 0 8px;
+  color: #fbbf24;
+}
+
+.proofCard h3 {
+  margin: 0 0 6px;
+  font-size: 1.05rem;
+}
+
+.proofCard p {
+  margin: 0;
+  color: #cbd5e1;
+}
+
 .card {
   background: #fff;
   border: 1px solid var(--border);
@@ -263,6 +296,14 @@
 .card p {
   margin: 0;
   color: var(--muted);
+}
+
+.outcomeList {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--muted);
+  display: grid;
+  gap: 6px;
 }
 
 .cardLink {
@@ -390,6 +431,21 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 8px;
+}
+
+.disclosureBox {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.disclosureList {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
 }
 
 .footer {

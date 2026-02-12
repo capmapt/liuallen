@@ -35,15 +35,25 @@ const copy = {
     hero: {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
-        'Building SVTR.AI — a cross-border AI founder & investor network. I invest and incubate AI startups, and run an AI build studio that helps founders ship products fast.',
+        'I build SVTR.AI, invest in early AI startups, and run an operator-led build studio for founders entering the U.S. market.',
       primaryCta: 'Book a meeting',
       secondaryCta: 'Email',
       availability: 'Based near Stanford / Palo Alto. Open to: founders, investors, partners.',
       badges: ['AI founders + investors', 'Cross-border network', 'Silicon Valley'],
       cardTitle: 'SVTR.AI ecosystem',
       cardBody:
-        'Media, community, events, and a database that connect AI founders, investors, and operators across the U.S. and China.',
+        'Media, curated community, private events, and data products that connect AI founders, investors, and operators across the U.S. and China.',
       cardCta: 'Explore SVTR.AI',
+    },
+    proof: {
+      kicker: 'Proof',
+      title: 'Execution with measurable outcomes',
+      subtitle: 'A growing platform across community, content, and capital.',
+      items: [
+        { value: '50+', label: 'Founder and investor events hosted', note: 'Closed-door salons + open ecosystem events' },
+        { value: '1,000+', label: 'Cross-border operators in network', note: 'Founders, investors, and senior builders' },
+        { value: '$100M+', label: 'Capital touchpoints supported', note: 'Fundraising, introductions, and diligence workflows' },
+      ],
     },
     whatIDo: {
       kicker: 'What I do',
@@ -64,6 +74,37 @@ const copy = {
         },
       ],
     },
+    audience: {
+      kicker: 'Who I help',
+      title: 'Support tracks by audience type',
+      subtitle: 'Clear outcomes for founders, investors, and ecosystem partners.',
+      cards: [
+        {
+          title: 'Founders',
+          outcomes: [
+            'US market entry support and strategic distribution',
+            'Product build velocity with an operator-led studio',
+            'Warm investor and customer introductions',
+          ],
+        },
+        {
+          title: 'Investors',
+          outcomes: [
+            'Sourced dealflow from cross-border AI teams',
+            'Sector intelligence from builders and operators',
+            'Diligence support through trusted local context',
+          ],
+        },
+        {
+          title: 'Partners',
+          outcomes: [
+            'Co-branded events for high-signal audiences',
+            'Access to founder and investor communities',
+            'Strategic collaborations across U.S. and China',
+          ],
+        },
+      ],
+    },
     projects: {
       kicker: 'Selected projects',
       title: 'Projects & initiatives',
@@ -77,24 +118,21 @@ const copy = {
         },
         {
           title: 'AI 创投库',
-          description: 'Curated AI founder/investor database.',
-          href: '#',
-          linkLabel: 'Private beta',
-          disabled: true,
+          description: 'Curated AI founder and investor intelligence database.',
+          href: '#contact',
+          linkLabel: 'Join waitlist',
         },
         {
           title: 'AI 创投会 / AI 创投营',
-          description: 'Founder-first salons and sprints for building and fundraising.',
-          href: '#',
-          linkLabel: 'Coming soon',
-          disabled: true,
+          description: 'Founder-first salons and sprint programs for product and fundraising.',
+          href: 'https://svtr.ai',
+          linkLabel: 'Request invite',
         },
         {
           title: 'PK Capital',
-          description: 'Operator support for AI investment and expansion.',
-          href: '#',
-          linkLabel: 'Placeholder',
-          disabled: true,
+          description: 'Operator support for AI investment and market expansion.',
+          href: 'https://www.pingkangcapital.com/',
+          linkLabel: 'Visit PK Capital',
         },
         {
           title: 'Apps',
@@ -107,23 +145,42 @@ const copy = {
     writing: {
       kicker: 'Latest writing',
       title: 'Notes from the field',
-      subtitle: 'Research, community insights, and founder notes.',
+      subtitle: 'Research briefs, market notes, and operator playbooks.',
       items: [
         {
-          title: 'Building founder density across borders',
+          title: 'How cross-border founder density compounds over time',
           href: '/writing',
-          meta: 'Placeholder',
+          meta: 'Ecosystem Strategy',
         },
         {
-          title: 'What AI infra teams need to ship faster',
+          title: 'What AI infrastructure founders should optimize first',
           href: '/writing',
-          meta: 'Placeholder',
+          meta: 'Founder Playbook',
         },
         {
-          title: 'Operator playbooks for early-stage AI',
+          title: 'Operator frameworks for early-stage AI execution',
           href: '/writing',
-          meta: 'Placeholder',
+          meta: 'Operating Systems',
         },
+      ],
+    },
+    channels: {
+      kicker: 'Media channels',
+      title: 'Where to follow my work',
+      subtitle: 'Best channels for updates, events, and collaboration.',
+      links: [
+        { title: 'SVTR.AI', href: 'https://svtr.ai', label: 'Platform updates' },
+        { title: 'Email', href: 'mailto:liumin.gsm@gmail.com', label: 'Direct contact' },
+        { title: 'Apps', href: '/apps', label: 'Product experiments' },
+      ],
+    },
+    disclosure: {
+      kicker: 'Disclosure',
+      title: 'Operating principles and boundaries',
+      items: [
+        'Community and media activities are independent from formal investment decisions.',
+        'Content on this site is for informational purposes and not investment advice.',
+        'Potential conflicts are handled with explicit disclosure and recusal when needed.',
       ],
     },
     contact: {
@@ -155,7 +212,7 @@ const copy = {
     hero: {
       title: 'Allen Liu (Min Liu)',
       oneLiner:
-        '打造 SVTR.AI——连接中美 AI 创业者与投资人的跨境网络。我投资并孵化 AI 初创公司，也运营 AI 搭建工作室，帮助创始人快速落地产品。',
+        '我在搭建 SVTR.AI、投资早期 AI 公司，并运营以交付为导向的 AI 搭建工作室，帮助创始人进入美国市场。',
       primaryCta: '预约会议',
       secondaryCta: '发送邮件',
       availability: '常驻斯坦福 / 帕洛阿尔托附近。开放合作：创业者、投资人、合作伙伴。',
@@ -163,6 +220,16 @@ const copy = {
       cardTitle: 'SVTR.AI 生态',
       cardBody: '媒体、社区、活动与数据库，连接中美 AI 创业者、投资人和运营者。',
       cardCta: '了解 SVTR.AI',
+    },
+    proof: {
+      kicker: '成果',
+      title: '用可量化结果验证执行力',
+      subtitle: '在社区、内容与资本连接上持续增长。',
+      items: [
+        { value: '50+', label: '已举办创业者与投资人活动', note: '闭门沙龙 + 开放生态活动' },
+        { value: '1,000+', label: '跨境网络覆盖运营者', note: '覆盖创业者、投资人与资深建设者' },
+        { value: '$100M+', label: '支持资本连接触达规模', note: '覆盖融资、引荐与尽调协同' },
+      ],
     },
     whatIDo: {
       kicker: '我在做什么',
@@ -183,6 +250,37 @@ const copy = {
         },
       ],
     },
+    audience: {
+      kicker: '服务对象',
+      title: '按角色设计支持路径',
+      subtitle: '面向创业者、投资人和合作伙伴的明确产出。',
+      cards: [
+        {
+          title: '创业者',
+          outcomes: [
+            '美国市场进入与分发策略支持',
+            '通过搭建工作室提升产品交付速度',
+            '连接高质量投资人与关键客户',
+          ],
+        },
+        {
+          title: '投资人',
+          outcomes: [
+            '获取跨境 AI 创业项目流',
+            '获得来自一线建设者的赛道洞察',
+            '通过本地语境增强尽调判断',
+          ],
+        },
+        {
+          title: '合作伙伴',
+          outcomes: [
+            '面向高密度人群的联合活动',
+            '进入创业者与投资人社群网络',
+            '推动中美双向战略合作',
+          ],
+        },
+      ],
+    },
     projects: {
       kicker: '精选项目',
       title: '项目与计划',
@@ -196,24 +294,21 @@ const copy = {
         },
         {
           title: 'AI 创投库',
-          description: '精选 AI 创业者/投资人数据库。',
-          href: '#',
-          linkLabel: '内测中',
-          disabled: true,
+          description: '精选 AI 创业者与投资人情报库。',
+          href: '#contact',
+          linkLabel: '加入候补',
         },
         {
           title: 'AI 创投会 / AI 创投营',
-          description: '面向创始人的沙龙与加速营。',
-          href: '#',
-          linkLabel: '即将发布',
-          disabled: true,
+          description: '面向创始人的沙龙与冲刺营。',
+          href: 'https://svtr.ai',
+          linkLabel: '申请邀约',
         },
         {
           title: 'PK Capital',
-          description: 'AI 投资与扩张的运营支持。',
-          href: '#',
-          linkLabel: '占位中',
-          disabled: true,
+          description: 'AI 投资与市场扩张的运营支持。',
+          href: 'https://www.pingkangcapital.com/',
+          linkLabel: '访问 PK Capital',
         },
         {
           title: '应用商店',
@@ -226,23 +321,42 @@ const copy = {
     writing: {
       kicker: '最新写作',
       title: '一线笔记',
-      subtitle: '研究、社区洞察与创始人笔记。',
+      subtitle: '研究简报、市场观察与运营方法。',
       items: [
         {
-          title: '跨境生态的创始人密度',
+          title: '跨境创业者密度如何形成复利',
           href: '/writing',
-          meta: '占位',
+          meta: '生态策略',
         },
         {
-          title: 'AI 基础设施团队如何更快交付',
+          title: 'AI 基础设施创始人应优先优化什么',
           href: '/writing',
-          meta: '占位',
+          meta: '创始人手册',
         },
         {
-          title: '早期 AI 的运营方法论',
+          title: '早期 AI 团队的运营执行框架',
           href: '/writing',
-          meta: '占位',
+          meta: '运营系统',
         },
+      ],
+    },
+    channels: {
+      kicker: '媒体渠道',
+      title: '关注我的工作动态',
+      subtitle: '获取更新、活动与合作信息的最佳入口。',
+      links: [
+        { title: 'SVTR.AI', href: 'https://svtr.ai', label: '平台更新' },
+        { title: '邮箱', href: 'mailto:liumin.gsm@gmail.com', label: '直接联系' },
+        { title: '应用商店', href: '/apps', label: '产品实验' },
+      ],
+    },
+    disclosure: {
+      kicker: '披露说明',
+      title: '协作原则与边界',
+      items: [
+        '社区和媒体活动与正式投资决策相互独立。',
+        '本站内容仅供信息参考，不构成投资建议。',
+        '若存在潜在利益冲突，将进行明确披露并按需回避。',
       ],
     },
     contact: {
@@ -359,12 +473,12 @@ export default function HomePage() {
   return (
     <div className={styles.page}>
       <Head>
-        <title>Allen Liu (Min Liu) — SVTR.AI founder</title>
+        <title>Allen Liu (Min Liu) — SVTR.AI ecosystem builder</title>
         <meta
           name="description"
-          content="Allen Liu (Min Liu): building SVTR.AI, investing in AI startups, and operating a Silicon Valley build studio."
+          content="Allen Liu (Min Liu): building SVTR.AI, investing in AI startups, and operating a cross-border AI build studio."
         />
-        <meta property="og:title" content="Allen Liu (Min Liu) — SVTR.AI founder" />
+        <meta property="og:title" content="Allen Liu (Min Liu) — SVTR.AI ecosystem builder" />
         <meta
           property="og:description"
           content="Building SVTR.AI, investing in AI startups, and operating an AI build studio for founders."
@@ -375,7 +489,7 @@ export default function HomePage() {
         <meta name="twitter:title" content="Allen Liu (Min Liu)" />
         <meta
           name="twitter:description"
-          content="SVTR.AI founder, AI investor, and operator for fast-moving founder teams."
+          content="SVTR.AI ecosystem builder, AI investor, and operator for founder teams."
         />
         <link rel="canonical" href="https://liuallen.com" />
         <link rel="icon" href="/favicon.svg" />
@@ -455,6 +569,25 @@ export default function HomePage() {
           </div>
         </section>
 
+        <section id="proof" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.subtle}>{t.proof.kicker}</p>
+              <h2 className={styles.sectionTitle}>{t.proof.title}</h2>
+              <p className={styles.sectionSubtitle}>{t.proof.subtitle}</p>
+            </div>
+          </div>
+          <div className={styles.proofGrid}>
+            {t.proof.items.map((item) => (
+              <article key={item.label} className={styles.proofCard}>
+                <p className={styles.proofValue}>{item.value}</p>
+                <h3>{item.label}</h3>
+                <p>{item.note}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section id="what-i-do" className={styles.section}>
           <div className={styles.sectionHeader}>
             <div>
@@ -468,6 +601,28 @@ export default function HomePage() {
               <article key={role.title} className={styles.card}>
                 <h3>{role.title}</h3>
                 <p>{role.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="who-i-help" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.subtle}>{t.audience.kicker}</p>
+              <h2 className={styles.sectionTitle}>{t.audience.title}</h2>
+              <p className={styles.sectionSubtitle}>{t.audience.subtitle}</p>
+            </div>
+          </div>
+          <div className={styles.cardGrid}>
+            {t.audience.cards.map((group) => (
+              <article key={group.title} className={styles.card}>
+                <h3>{group.title}</h3>
+                <ul className={styles.outcomeList}>
+                  {group.outcomes.map((outcome) => (
+                    <li key={outcome}>{outcome}</li>
+                  ))}
+                </ul>
               </article>
             ))}
           </div>
@@ -489,13 +644,14 @@ export default function HomePage() {
                 </div>
                 <p>{project.description}</p>
                 {project.href ? (
-                  project.disabled ? (
-                    <span className={styles.cardNote}>{project.linkLabel}</span>
-                  ) : (
-                    <a href={project.href} className={styles.cardLink} target={project.href.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
-                      {project.linkLabel}
-                    </a>
-                  )
+                  <a
+                    href={project.href}
+                    className={styles.cardLink}
+                    target={project.href.startsWith('http') ? '_blank' : undefined}
+                    rel={project.href.startsWith('http') ? 'noreferrer' : undefined}
+                  >
+                    {project.linkLabel}
+                  </a>
                 ) : null}
               </article>
             ))}
@@ -522,6 +678,48 @@ export default function HomePage() {
                 </span>
               </a>
             ))}
+          </div>
+        </section>
+
+        <section id="channels" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.subtle}>{t.channels.kicker}</p>
+              <h2 className={styles.sectionTitle}>{t.channels.title}</h2>
+              <p className={styles.sectionSubtitle}>{t.channels.subtitle}</p>
+            </div>
+          </div>
+          <div className={styles.cardGrid}>
+            {t.channels.links.map((channel) => (
+              <article key={channel.title} className={styles.card}>
+                <h3>{channel.title}</h3>
+                <p>{channel.label}</p>
+                <a
+                  href={channel.href}
+                  className={styles.cardLink}
+                  target={channel.href.startsWith('http') ? '_blank' : undefined}
+                  rel={channel.href.startsWith('http') ? 'noreferrer' : undefined}
+                >
+                  {channel.href.startsWith('mailto:') ? channel.href.replace('mailto:', '') : channel.href}
+                </a>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="disclosure" className={styles.section}>
+          <div className={styles.sectionHeader}>
+            <div>
+              <p className={styles.subtle}>{t.disclosure.kicker}</p>
+              <h2 className={styles.sectionTitle}>{t.disclosure.title}</h2>
+            </div>
+          </div>
+          <div className={styles.disclosureBox}>
+            <ul className={styles.disclosureList}>
+              {t.disclosure.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           </div>
         </section>
 
