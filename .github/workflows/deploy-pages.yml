@@ -6,6 +6,7 @@ on:
     branches: [main]
     paths:
       - 'apps/web/**'
+      - 'functions/**'
       - '.github/workflows/deploy-pages.yml'
       - 'package.json'
       - 'pnpm-lock.yaml'
@@ -20,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v3
         with:
-          version: 8
+          version: 10
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -35,7 +36,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: maildiary-web
+          projectName: liuallen
           directory: apps/web/out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
           branch: main
