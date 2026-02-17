@@ -27,7 +27,6 @@ const copy = {
   en: {
     nav: {
       about: 'What I do',
-      projects: 'Projects',
       writing: 'Writing',
       contact: 'Contact',
       apps: 'Apps',
@@ -50,27 +49,33 @@ const copy = {
       title: 'Execution with measurable outcomes',
       subtitle: 'A growing platform across community, content, and capital.',
       items: [
-        { value: '50+', label: 'Founder and investor events hosted', note: 'Closed-door salons + open ecosystem events' },
-        { value: '1,000+', label: 'Cross-border operators in network', note: 'Founders, investors, and senior builders' },
-        { value: '$100M+', label: 'Capital touchpoints supported', note: 'Fundraising, introductions, and diligence workflows' },
+        { value: '400+', label: 'Founder and investor events hosted', note: 'Closed-door salons + open ecosystem events' },
+        { value: '120,000+', label: 'Cross-border operators in network', note: 'Founders, investors, and senior builders' },
+        { value: '$1B+', label: 'Capital touchpoints supported', note: 'Fundraising, introductions, and diligence workflows' },
       ],
     },
     whatIDo: {
       kicker: 'What I do',
-      title: 'Building the SVTR.AI ecosystem',
-      subtitle: 'Three ways I support AI founders and investors.',
+      title: 'Building a global AI venture ecosystem',
+      subtitle: 'Three core business lines.',
       cards: [
         {
-          title: 'SVTR.AI Ecosystem',
-          description: 'Media + community + events + database bridging US–China AI founders/investors.',
+          title: 'SVTR Transaction Accelerator',
+          description: 'Cross-border deal and growth acceleration for AI founders and investors.',
+          href: 'https://svtr.ai',
+          linkLabel: 'Open svtr.ai',
         },
         {
           title: 'Investing & Incubation',
-          description: 'Early-stage AI + infrastructure focus; connect capital, customers, and talent.',
+          description: 'Early-stage AI and infrastructure investment with operator-side incubation.',
+          href: 'https://www.pingkangcapital.com/',
+          linkLabel: 'Open pingkangcapital.com',
         },
         {
           title: 'AI Build Studio',
-          description: 'We help non-technical founders build websites/apps fast with high-quality engineering.',
+          description: 'Fast product delivery for non-technical founders with production-grade engineering.',
+          href: 'https://liuallen.pages.dev/apps',
+          linkLabel: 'Open apps',
         },
       ],
     },
@@ -105,43 +110,6 @@ const copy = {
         },
       ],
     },
-    projects: {
-      kicker: 'Selected projects',
-      title: 'Projects & initiatives',
-      subtitle: 'Focused on ecosystem building, investing, and founder enablement.',
-      cards: [
-        {
-          title: 'SVTR.AI',
-          description: 'Cross-border AI founder & investor network.',
-          href: 'https://svtr.ai',
-          linkLabel: 'Visit SVTR.AI',
-        },
-        {
-          title: 'AI 创投库',
-          description: 'Curated AI founder and investor intelligence database.',
-          href: '#contact',
-          linkLabel: 'Join waitlist',
-        },
-        {
-          title: 'AI 创投会 / AI 创投营',
-          description: 'Founder-first salons and sprint programs for product and fundraising.',
-          href: 'https://svtr.ai',
-          linkLabel: 'Request invite',
-        },
-        {
-          title: 'PK Capital',
-          description: 'Operator support for AI investment and market expansion.',
-          href: 'https://www.pingkangcapital.com/',
-          linkLabel: 'Visit PK Capital',
-        },
-        {
-          title: 'Apps',
-          description: 'My product experiments and app store.',
-          href: '/apps',
-          linkLabel: 'Open /apps',
-        },
-      ],
-    },
     writing: {
       kicker: 'Latest writing',
       title: 'Notes from the field',
@@ -164,16 +132,6 @@ const copy = {
         },
       ],
     },
-    channels: {
-      kicker: 'Media channels',
-      title: 'Where to follow my work',
-      subtitle: 'Best channels for updates, events, and collaboration.',
-      links: [
-        { title: 'SVTR.AI', href: 'https://svtr.ai', label: 'Platform updates' },
-        { title: 'Email', href: 'mailto:liumin.gsm@gmail.com', label: 'Direct contact' },
-        { title: 'Apps', href: '/apps', label: 'Product experiments' },
-      ],
-    },
     disclosure: {
       kicker: 'Disclosure',
       title: 'Operating principles and boundaries',
@@ -189,7 +147,11 @@ const copy = {
       subtitle: 'Book a call, send an email, or share the details below.',
       note:
         'I respond fastest with context: who you are, what you are building, and how I can help.',
-      emailLabel: 'Email: liumin.gsm@gmail.com',
+      linkedInLabel: 'linkedin.com/in/minallenliu',
+      linkedInHref: 'https://www.linkedin.com/in/minallenliu/',
+      xiaohongshuLabel: 'xiaohongshu profile',
+      xiaohongshuHref: 'https://www.xiaohongshu.com/user/profile/64c0963c0000000014038a36',
+      wechatLabel: 'AllenSVTR',
       form: {
         name: 'Name',
         email: 'Email',
@@ -204,13 +166,12 @@ const copy = {
   zh: {
     nav: {
       about: '我在做什么',
-      projects: '项目',
       writing: '写作',
       contact: '联系',
       apps: '应用',
     },
     hero: {
-      title: 'Allen Liu (Min Liu)',
+      title: '刘敏（Allen Liu）',
       oneLiner:
         '我在搭建 SVTR.AI、投资早期 AI 公司，并运营以交付为导向的 AI 搭建工作室，帮助创始人进入美国市场。',
       primaryCta: '预约会议',
@@ -226,27 +187,33 @@ const copy = {
       title: '用可量化结果验证执行力',
       subtitle: '在社区、内容与资本连接上持续增长。',
       items: [
-        { value: '50+', label: '已举办创业者与投资人活动', note: '闭门沙龙 + 开放生态活动' },
-        { value: '1,000+', label: '跨境网络覆盖运营者', note: '覆盖创业者、投资人与资深建设者' },
-        { value: '$100M+', label: '支持资本连接触达规模', note: '覆盖融资、引荐与尽调协同' },
+        { value: '400+', label: '已举办创业者与投资人活动', note: '闭门沙龙 + 开放生态活动' },
+        { value: '120,000+', label: '跨境网络覆盖运营者', note: '覆盖创业者、投资人与资深建设者' },
+        { value: '$1B+', label: '支持资本连接触达规模', note: '覆盖融资、引荐与尽调协同' },
       ],
     },
     whatIDo: {
       kicker: '我在做什么',
-      title: '建设 SVTR.AI 生态',
-      subtitle: '支持 AI 创业者与投资人的三种方式。',
+      title: '建设全球AI创投生态',
+      subtitle: '三大核心业务。',
       cards: [
         {
-          title: 'SVTR.AI 生态',
-          description: '媒体 + 社区 + 活动 + 数据库，连接中美 AI 创业者/投资人。',
+          title: 'SVTR交易加速器',
+          description: '为 AI 创业者与投资人提供跨境交易与增长加速服务。',
+          href: 'https://svtr.ai',
+          linkLabel: '访问 svtr.ai',
         },
         {
           title: '投资与孵化',
-          description: '聚焦早期 AI 与基础设施，连接资本、客户与人才。',
+          description: '聚焦早期 AI 与基础设施投资，提供投后与孵化支持。',
+          href: 'https://www.pingkangcapital.com/',
+          linkLabel: '访问 pingkangcapital.com',
         },
         {
           title: 'AI 搭建工作室',
-          description: '帮助非技术创始人快速搭建网站/应用，工程质量可靠。',
+          description: '帮助非技术创始人快速搭建网站与应用，并稳定上线。',
+          href: 'https://liuallen.pages.dev/apps',
+          linkLabel: '访问应用商店',
         },
       ],
     },
@@ -281,43 +248,6 @@ const copy = {
         },
       ],
     },
-    projects: {
-      kicker: '精选项目',
-      title: '项目与计划',
-      subtitle: '围绕生态建设、投资与创始人赋能。',
-      cards: [
-        {
-          title: 'SVTR.AI',
-          description: '跨境 AI 创业者与投资人网络。',
-          href: 'https://svtr.ai',
-          linkLabel: '访问 SVTR.AI',
-        },
-        {
-          title: 'AI 创投库',
-          description: '精选 AI 创业者与投资人情报库。',
-          href: '#contact',
-          linkLabel: '加入候补',
-        },
-        {
-          title: 'AI 创投会 / AI 创投营',
-          description: '面向创始人的沙龙与冲刺营。',
-          href: 'https://svtr.ai',
-          linkLabel: '申请邀约',
-        },
-        {
-          title: 'PK Capital',
-          description: 'AI 投资与市场扩张的运营支持。',
-          href: 'https://www.pingkangcapital.com/',
-          linkLabel: '访问 PK Capital',
-        },
-        {
-          title: '应用商店',
-          description: '我的产品实验与应用商店。',
-          href: '/apps',
-          linkLabel: '打开 /apps',
-        },
-      ],
-    },
     writing: {
       kicker: '最新写作',
       title: '一线笔记',
@@ -340,16 +270,6 @@ const copy = {
         },
       ],
     },
-    channels: {
-      kicker: '媒体渠道',
-      title: '关注我的工作动态',
-      subtitle: '获取更新、活动与合作信息的最佳入口。',
-      links: [
-        { title: 'SVTR.AI', href: 'https://svtr.ai', label: '平台更新' },
-        { title: '邮箱', href: 'mailto:liumin.gsm@gmail.com', label: '直接联系' },
-        { title: '应用商店', href: '/apps', label: '产品实验' },
-      ],
-    },
     disclosure: {
       kicker: '披露说明',
       title: '协作原则与边界',
@@ -364,7 +284,11 @@ const copy = {
       title: '一起共建',
       subtitle: '预约电话、发送邮件，或填写表单。',
       note: '我会优先回复信息完整的联系：你是谁、在做什么、需要我怎么支持。',
-      emailLabel: '邮箱：liumin.gsm@gmail.com',
+      linkedInLabel: 'linkedin.com/in/minallenliu',
+      linkedInHref: 'https://www.linkedin.com/in/minallenliu/',
+      xiaohongshuLabel: '小红书主页',
+      xiaohongshuHref: 'https://www.xiaohongshu.com/user/profile/64c0963c0000000014038a36',
+      wechatLabel: 'AllenSVTR',
       form: {
         name: '姓名',
         email: '邮箱',
@@ -381,6 +305,7 @@ const copy = {
 export default function HomePage() {
   const turnstileSiteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITEKEY;
   const [language, setLanguage] = useState<Language>('en');
+  const [menuOpen, setMenuOpen] = useState(false);
   const [formState, setFormState] = useState<FormState>('idle');
   const [error, setError] = useState('');
   const [turnstileToken, setTurnstileToken] = useState('');
@@ -505,19 +430,48 @@ export default function HomePage() {
             </div>
           </div>
           <div className={styles.navRight}>
-            <nav className={styles.navLinks} aria-label="Primary navigation">
-              <a href="#what-i-do">{t.nav.about}</a>
-              <a href="#projects">{t.nav.projects}</a>
-              <a href="#writing">{t.nav.writing}</a>
-              <a href="#contact">{t.nav.contact}</a>
-              <a href="/apps">{t.nav.apps}</a>
+            <button
+              type="button"
+              className={styles.menuButton}
+              aria-expanded={menuOpen}
+              aria-controls="primary-nav"
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? (language === 'en' ? 'Close' : '关闭') : language === 'en' ? 'Menu' : '菜单'}
+            </button>
+            <nav
+              id="primary-nav"
+              className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ''}`}
+              aria-label="Primary navigation"
+            >
+              <a href="#proof" onClick={() => setMenuOpen(false)}>
+                {language === 'en' ? 'Proof' : '成果'}
+              </a>
+              <a href="#what-i-do" onClick={() => setMenuOpen(false)}>
+                {t.nav.about}
+              </a>
+              <a href="#who-i-help" onClick={() => setMenuOpen(false)}>
+                {language === 'en' ? 'Who I help' : '服务对象'}
+              </a>
+              <a href="#writing" onClick={() => setMenuOpen(false)}>
+                {t.nav.writing}
+              </a>
+              <a href="#contact" onClick={() => setMenuOpen(false)}>
+                {t.nav.contact}
+              </a>
+              <a href="/apps" onClick={() => setMenuOpen(false)}>
+                {t.nav.apps}
+              </a>
             </nav>
             <div className={styles.langToggle} role="group" aria-label="Language toggle">
               <button
                 className={`${styles.langButton} ${language === 'en' ? styles.langButtonActive : ''}`}
                 type="button"
                 aria-pressed={language === 'en'}
-                onClick={() => setLanguage('en')}
+                onClick={() => {
+                  setLanguage('en');
+                  setMenuOpen(false);
+                }}
               >
                 EN
               </button>
@@ -525,7 +479,10 @@ export default function HomePage() {
                 className={`${styles.langButton} ${language === 'zh' ? styles.langButtonActive : ''}`}
                 type="button"
                 aria-pressed={language === 'zh'}
-                onClick={() => setLanguage('zh')}
+                onClick={() => {
+                  setLanguage('zh');
+                  setMenuOpen(false);
+                }}
               >
                 中文
               </button>
@@ -553,14 +510,10 @@ export default function HomePage() {
               >
                 {t.hero.primaryCta}
               </a>
-              <a className={styles.secondaryBtn} href="mailto:liumin.gsm@gmail.com">
-                {t.hero.secondaryCta}
-              </a>
             </div>
             <p className={styles.heroNote}>{t.hero.availability}</p>
           </div>
           <div className={styles.heroCard}>
-            <small>SVTR.AI</small>
             <h3>{t.hero.cardTitle}</h3>
             <p>{t.hero.cardBody}</p>
             <a className={styles.secondaryBtn} href="https://svtr.ai" target="_blank" rel="noreferrer">
@@ -601,6 +554,9 @@ export default function HomePage() {
               <article key={role.title} className={styles.card}>
                 <h3>{role.title}</h3>
                 <p>{role.description}</p>
+                <a className={styles.cardLink} href={role.href} target="_blank" rel="noreferrer">
+                  {role.linkLabel}
+                </a>
               </article>
             ))}
           </div>
@@ -628,36 +584,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="projects" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.subtle}>{t.projects.kicker}</p>
-              <h2 className={styles.sectionTitle}>{t.projects.title}</h2>
-              <p className={styles.sectionSubtitle}>{t.projects.subtitle}</p>
-            </div>
-          </div>
-          <div className={styles.cardGrid}>
-            {t.projects.cards.map((project) => (
-              <article key={project.title} className={styles.card}>
-                <div className={styles.cardTitleRow}>
-                  <h3>{project.title}</h3>
-                </div>
-                <p>{project.description}</p>
-                {project.href ? (
-                  <a
-                    href={project.href}
-                    className={styles.cardLink}
-                    target={project.href.startsWith('http') ? '_blank' : undefined}
-                    rel={project.href.startsWith('http') ? 'noreferrer' : undefined}
-                  >
-                    {project.linkLabel}
-                  </a>
-                ) : null}
-              </article>
-            ))}
-          </div>
-        </section>
-
         <section id="writing" className={styles.section}>
           <div className={styles.sectionHeader}>
             <div>
@@ -677,32 +603,6 @@ export default function HomePage() {
                   ↗
                 </span>
               </a>
-            ))}
-          </div>
-        </section>
-
-        <section id="channels" className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <div>
-              <p className={styles.subtle}>{t.channels.kicker}</p>
-              <h2 className={styles.sectionTitle}>{t.channels.title}</h2>
-              <p className={styles.sectionSubtitle}>{t.channels.subtitle}</p>
-            </div>
-          </div>
-          <div className={styles.cardGrid}>
-            {t.channels.links.map((channel) => (
-              <article key={channel.title} className={styles.card}>
-                <h3>{channel.title}</h3>
-                <p>{channel.label}</p>
-                <a
-                  href={channel.href}
-                  className={styles.cardLink}
-                  target={channel.href.startsWith('http') ? '_blank' : undefined}
-                  rel={channel.href.startsWith('http') ? 'noreferrer' : undefined}
-                >
-                  {channel.href.startsWith('mailto:') ? channel.href.replace('mailto:', '') : channel.href}
-                </a>
-              </article>
             ))}
           </div>
         </section>
@@ -738,13 +638,27 @@ export default function HomePage() {
                 >
                   {t.hero.primaryCta}
                 </a>
-                <a className={styles.secondaryBtn} href="mailto:liumin.gsm@gmail.com">
-                  {t.hero.secondaryCta}
-                </a>
               </div>
               <div className={styles.contactNotes}>
                 <p className={styles.subtle}>{t.contact.note}</p>
-                <p className={styles.subtle}>{t.contact.emailLabel}</p>
+                <p className={styles.contactItem}>
+                  <a className={styles.contactLink} href={t.contact.linkedInHref} target="_blank" rel="noreferrer">
+                    <span className={`${styles.contactIcon} ${styles.linkedinIcon}`}>in</span>
+                    {t.contact.linkedInLabel}
+                  </a>
+                </p>
+                <p className={styles.contactItem}>
+                  <a className={styles.contactLink} href={t.contact.xiaohongshuHref} target="_blank" rel="noreferrer">
+                    <span className={`${styles.contactIcon} ${styles.xiaohongshuIcon}`}>RED</span>
+                    {t.contact.xiaohongshuLabel}
+                  </a>
+                </p>
+                <p className={styles.contactItem}>
+                  <span className={styles.contactLink}>
+                    <span className={`${styles.contactIcon} ${styles.wechatIcon}`}>WX</span>
+                    {t.contact.wechatLabel}
+                  </span>
+                </p>
               </div>
             </div>
             <form className={styles.contactForm} onSubmit={handleSubmit}>

@@ -64,6 +64,21 @@
   justify-content: flex-end;
 }
 
+.menuButton {
+  display: none;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--ink);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.navLinksOpen {
+  display: flex;
+}
+
 .navLinks a {
   color: var(--ink);
   padding: 6px 10px;
@@ -311,6 +326,17 @@
   color: #0ea5e9;
 }
 
+.statusBadge {
+  border-radius: 999px;
+  padding: 3px 9px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0369a1;
+  background: rgba(14, 165, 233, 0.13);
+  border: 1px solid rgba(14, 165, 233, 0.24);
+  white-space: nowrap;
+}
+
 .cardNote {
   font-size: 0.9rem;
   color: var(--muted);
@@ -376,6 +402,43 @@
 .contactNotes {
   display: grid;
   gap: 6px;
+}
+
+.contactItem {
+  margin: 0;
+}
+
+.contactLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #0ea5e9;
+  font-weight: 600;
+}
+
+.contactIcon {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  font-weight: 800;
+}
+
+.linkedinIcon {
+  background: #0a66c2;
+}
+
+.xiaohongshuIcon {
+  background: #e11d48;
+}
+
+.wechatIcon {
+  background: #16a34a;
 }
 
 .contactForm {
@@ -467,11 +530,42 @@
 @media (max-width: 720px) {
   .navbar {
     position: static;
+    align-items: flex-start;
+    flex-direction: column;
   }
 
   .navRight {
     width: 100%;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: start;
+    gap: 10px;
+  }
+
+  .menuButton {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navLinks {
+    display: none;
+    grid-column: 1 / -1;
+    width: 100%;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 8px;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .navLinks a {
+    width: fit-content;
+  }
+
+  .langToggle {
+    justify-self: end;
   }
 
   .heroCard {
